@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 const index = () => {
   return (
     <SafeAreaView className="flex-1 bg-background px-5 py-2 justify-center items-center">
-      <Link href={`/(tabs)`}>
+      <Link href={`/(tabs)`} asChild>
         <Text className='text-3xl text-white font-bold'>Welcome</Text>
       </Link>
     </SafeAreaView>

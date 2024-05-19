@@ -7,19 +7,23 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarInactiveBackgroundColor: '#19212E',
-        tabBarActiveBackgroundColor: '#19212E',
+        tabBarShowLabel: false,
+        
         headerShown: false,
+        tabBarStyle: {
+          backgroundColor:'#161622',
+          borderTopWidth:0,
+          height:45
+        }
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          tabBarLabel:'',
           tabBarIcon: () =>
             <Image
               source={require('../../assets/icons/home.png')}
-              className='w-[20] h-[20] mt-3'
+              className='w-[25] h-[25]'
               tintColor={'#EF9508'}
             />
         }}
@@ -27,11 +31,20 @@ export default function TabLayout() {
       <Tabs.Screen
         name="two"
         options={{
-          tabBarLabel:'',
           tabBarIcon: () =>
             <Image
               source={require('../../assets/icons/bookmark.png')}
-              className='w-[20] h-[20] mt-3'
+              className='w-[25] h-[25]'
+            />
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          tabBarIcon: () =>
+            <Image
+              source={require('../../assets/icons/profile.png')}
+              className='w-[25] h-[25]'
             />
         }}
       />

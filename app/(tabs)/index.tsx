@@ -40,7 +40,7 @@ const Index = () => {
       </View>
       <FlatList
         data={topHeadlines}
-        className=' flex-initial mb-3'
+        className=' flex-initial mb-5'
         keyExtractor={(item) => item.url}
         renderItem={({ item, index }) => (
           item.urlToImage ?
@@ -58,19 +58,19 @@ const Index = () => {
           }
         }}
         viewabilityConfig={{
-          itemVisiblePercentThreshold: 150
+          itemVisiblePercentThreshold: 300
         }}
         horizontal={true}
       />
-      <ScrollView horizontal className='flex-initial' showsHorizontalScrollIndicator={false}>
+      <ScrollView horizontal className='flex-initial mb-2' showsHorizontalScrollIndicator={false}>
         <Pressable
           onPress={() => {
             setCategory('General')
             fetchHeadlines('General')
           }}>
           <Text
-            style={{ backgroundColor: (category === 'General') ? '#283A4A' : '#19212E' }}
-            className='text-white font-bold text-xl mx-1 p-2 rounded-xl self-center'
+            style={{ backgroundColor: (category === 'General') ? '#283A4A' : '#161622' }}
+            className='text-white font-bold text-base mx-1 p-2 rounded-xl self-center flex-auto'
           >
             General
           </Text>
@@ -82,8 +82,8 @@ const Index = () => {
           }}
         >
           <Text
-            style={{ backgroundColor: (category === 'Sports') ? '#283A4A' : '#19212E' }}
-            className='text-white font-bold text-xl mx-1 p-2 rounded-2xl self-center'
+            style={{ backgroundColor: (category === 'Sports') ? '#283A4A' : '#161622' }}
+            className='text-white font-bold text-base mx-1 p-2 rounded-2xl self-center flex-auto'
           >
             Sports
           </Text>
@@ -94,8 +94,8 @@ const Index = () => {
             fetchHeadlines('Technology')
           }}>
           <Text
-            style={{ backgroundColor: (category === 'Technology') ? '#283A4A' : '#19212E' }}
-            className='text-white font-bold text-xl mx-1 p-2 rounded-2xl self-center'
+            style={{ backgroundColor: (category === 'Technology') ? '#283A4A' : '#161622' }}
+            className='text-white font-bold text-base mx-1 p-2 rounded-2xl self-center flex-auto'
           >
             Technology
           </Text>
@@ -107,8 +107,8 @@ const Index = () => {
           }}
         >
           <Text
-            style={{ backgroundColor: (category === 'Politics') ? '#283A4A' : '#19212E' }}
-            className='text-white font-bold text-xl mx-1 p-2 rounded-2xl self-center'
+            style={{ backgroundColor: (category === 'Politics') ? '#283A4A' : '#161622' }}
+            className='text-white font-bold text-base mx-1 p-2 rounded-2xl self-center flex-auto'
           >
             Politics
           </Text>
@@ -119,8 +119,8 @@ const Index = () => {
             fetchHeadlines('Entertainment')
           }}>
           <Text
-            style={{ backgroundColor: (category === 'Entertainment') ? '#283A4A' : '#19212E' }}
-            className='text-white font-bold text-xl mx-1 p-2 rounded-2xl self-center'
+            style={{ backgroundColor: (category === 'Entertainment') ? '#283A4A' : '#161622' }}
+            className='text-white font-bold text-base mx-1 p-2 rounded-2xl self-center flex-auto'
           >
             Entertainment
           </Text>
@@ -134,7 +134,7 @@ const Index = () => {
         ) : (
           <FlatList
             data={headlines}
-            className='flex-1'
+            className='flex-initial'
             renderItem={({ item }) => {
               return (
                 (item.urlToImage) ?

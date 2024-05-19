@@ -9,7 +9,7 @@ interface HeadLinesCardProps {
 }
 
 const HeadlinesCard = ({ item }: HeadLinesCardProps) => {
-  const {setCurrentNews} = useNewsProvider()
+  const { setCurrentNews } = useNewsProvider()
   return (
     <Pressable
       onPress={() => {
@@ -17,40 +17,33 @@ const HeadlinesCard = ({ item }: HeadLinesCardProps) => {
         router.navigate('NewsView')
       }
       }>
-      <View className='flex-row my-3'>
+      <View className='flex-row py-3'>
         <Image
           source={{ uri: item.urlToImage }}
-          width={100}
-          height={100}
+          width={90}
+          height={90}
           borderRadius={20}
         />
-        <View className='mx-5 justify-between'>
+        <View className='mx-5 justify-between flex-auto'>
           <Text
-            className='text-white overflow-ellipsis'
-            numberOfLines={2}
+            className='text-gray-400'
+            numberOfLines={1}
           >
             {item.source.name}
           </Text>
           <Text
-            className='text-white text-lg font-bold overflow-ellipsis'
+            className='text-white text-base font-bold flex-auto'
             numberOfLines={2}
+            style={{flexShrink:1}}
           >
             {item.title}
           </Text>
-          <View className='flex-row'>
-            <Text
-              className='text-white overflow-ellipsis'
-              numberOfLines={1}
-            >
-              {item.author}
-            </Text>
-            {/* <Text
-            className='text-white overflow-ellipsis'
+          <Text
+            className='text-gray-400 flex-auto'
             numberOfLines={1}
           >
-            {item.publishedAt?.substring(0,10)}
-          </Text> */}
-          </View>
+            {item.publishedAt?.substring(0, 10)}
+          </Text>
         </View>
       </View>
     </Pressable>
