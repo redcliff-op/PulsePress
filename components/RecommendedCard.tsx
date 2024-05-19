@@ -1,7 +1,6 @@
 import { View, Text, ImageBackground, Pressable } from 'react-native';
 import React from 'react';
 import * as Animatable from 'react-native-animatable';
-import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useNewsProvider } from '@/providers/NewsProvider';
 
