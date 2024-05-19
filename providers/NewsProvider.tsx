@@ -1,5 +1,4 @@
 import { PropsWithChildren, createContext, useContext, useState } from "react"
-import { TurboModuleRegistry } from "react-native"
 
 type NewsType = {
   topHeadlines: NewsItem[],

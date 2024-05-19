@@ -8,43 +8,45 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarShowLabel: false,
-        
         headerShown: false,
+        tabBarActiveTintColor:'#FFA001',
         tabBarStyle: {
           backgroundColor:'#161622',
           borderTopWidth:0,
-          height:45
+          height:50
         }
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          tabBarIcon: () =>
+          tabBarIcon: ({color}) =>
             <Image
               source={require('../../assets/icons/home.png')}
               className='w-[25] h-[25]'
-              tintColor={'#EF9508'}
+              tintColor={color}
             />
         }}
       />
       <Tabs.Screen
         name="two"
         options={{
-          tabBarIcon: () =>
+          tabBarIcon: ({color}) =>
             <Image
               source={require('../../assets/icons/bookmark.png')}
               className='w-[25] h-[25]'
+              tintColor={color}
             />
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          tabBarIcon: () =>
+          tabBarIcon: ({color}) =>
             <Image
               source={require('../../assets/icons/profile.png')}
               className='w-[25] h-[25]'
+              tintColor={color}
             />
         }}
       />
