@@ -7,9 +7,8 @@ import { useNewsProvider } from '@/providers/NewsProvider';
 import HeadlinesCard from '@/components/HeadlinesCard';
 
 const Index = () => {
-  const pfp = require('../../assets/images/pfp.jpg');
   const [search, setSearch] = useState('');
-  const { topHeadlines, fetchTopHeadlines, headlines, fetchHeadlines, loading } = useNewsProvider()
+  const { topHeadlines, fetchTopHeadlines, headlines, fetchHeadlines, loading, userInfo } = useNewsProvider()
   const [currentIndex, setCurrentIndex] = useState(0);
   const [category, setCategory] = useState("General")
 
@@ -21,8 +20,8 @@ const Index = () => {
   return (
     <SafeAreaView className="flex-1 bg-background px-5 py-2">
       <View className="flex-row justify-between align-middle">
-        <Text className="text-white font-bold text-2xl">Search</Text>
-        <Image source={pfp} className="w-[35] h-[35] rounded-3xl"></Image>
+        <Text className="text-white font-bold text-2xl flex-auto">Search</Text>
+        <Image source={{uri: userInfo?.photo?.toString()}} className="w-[35] h-[35] rounded-3xl"></Image>
       </View>
       <Text className="text-white font-bold text-2xl">Your Daily News</Text>
       <View className="flex-row bg-textFieldBackground my-5 h-[50] rounded-2xl items-center px-5">
@@ -64,6 +63,7 @@ const Index = () => {
       />
       <ScrollView horizontal className='flex-initial mb-2' showsHorizontalScrollIndicator={false}>
         <Pressable
+          className='flex-auto'
           onPress={() => {
             setCategory('General')
             fetchHeadlines('General')
@@ -76,6 +76,7 @@ const Index = () => {
           </Text>
         </Pressable>
         <Pressable
+          className='flex-auto'
           onPress={() => {
             setCategory('Sports')
             fetchHeadlines('Sports')
@@ -89,6 +90,7 @@ const Index = () => {
           </Text>
         </Pressable>
         <Pressable
+          className='flex-auto'
           onPress={() => {
             setCategory('Technology')
             fetchHeadlines('Technology')
@@ -101,6 +103,7 @@ const Index = () => {
           </Text>
         </Pressable>
         <Pressable
+          className='flex-auto'
           onPress={() => {
             setCategory('Politics')
             fetchHeadlines('Politics')
@@ -114,6 +117,7 @@ const Index = () => {
           </Text>
         </Pressable>
         <Pressable
+          className='flex-auto'
           onPress={() => {
             setCategory('Entertainment')
             fetchHeadlines('Entertainment')

@@ -5,7 +5,8 @@ module.exports = {
     extend: {
       colors: {
         'background': '#161622',
-        'textFieldBackground': '#283A4A'
+        'textFieldBackground': '#283A4A',
+        'sigYellow': '#FFA001'
       },
     },
   },

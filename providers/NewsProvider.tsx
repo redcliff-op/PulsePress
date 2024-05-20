@@ -1,6 +1,8 @@
 import { PropsWithChildren, createContext, useContext, useState } from "react"
 
 type NewsType = {
+  userInfo: UserInfo | null,
+  setUserInfo: (user: UserInfo | null) => void
   topHeadlines: NewsItem[],
   fetchTopHeadlines: () => void,
   headlines: NewsItem[],
@@ -13,6 +15,8 @@ type NewsType = {
 }
 
 const NewsContext = createContext<NewsType>({
+  userInfo: null,
+  setUserInfo: (user: UserInfo | null) => { },
   topHeadlines: [],
   fetchTopHeadlines: () => { },
   headlines: [],
@@ -30,6 +34,7 @@ const NewsProvider = ({ children }: PropsWithChildren) => {
   const [recommended, setRecommended] = useState<NewsItem[]>([])
   const [currentNews, setCurrentNews] = useState<NewsItem>()
   const [loading, setLoading] = useState<boolean>(false)
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null)
 
   const fetchHeadlines = async (news: string) => {
     setLoading(true)
@@ -40,7 +45,7 @@ const NewsProvider = ({ children }: PropsWithChildren) => {
   }
 
   const fetchTopHeadlines = async () => {
-    const response = await fetch('https://newsapi.org/v2/top-headlines?country=in&apiKey=1f2170ec3cb342678e3d5c74d807c59b')
+    const response = await fetch(`https://newsapi.org/v2/top-headlines?country=in&apiKey=1f2170ec3cb342678e3d5c74d807c59b`)
     const data = await response.json()
     setTopHeadlines(data.articles)
   }
@@ -54,7 +59,7 @@ const NewsProvider = ({ children }: PropsWithChildren) => {
   }
 
   return (
-    <NewsContext.Provider value={{ topHeadlines, fetchTopHeadlines, headlines, fetchHeadlines, currentNews, setCurrentNews, recommended, fetchRecommended, loading}}>
+    <NewsContext.Provider value={{ topHeadlines, fetchTopHeadlines, headlines, fetchHeadlines, currentNews, setCurrentNews, recommended, fetchRecommended, loading, userInfo, setUserInfo }}>
       {children}
     </NewsContext.Provider>
   )

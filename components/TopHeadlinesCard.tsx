@@ -40,7 +40,6 @@ const TopHeadLinesCard = ({ newsData, index, currentIndex }: TopHeadLinesCardPro
       }
       }>
       <Animatable.View
-        className="mr-2"
         animation={animationType}
         duration={300}
         style={{ elevation: index === currentIndex ? 5 : 2 }}
@@ -67,7 +66,7 @@ const TopHeadLinesCard = ({ newsData, index, currentIndex }: TopHeadLinesCardPro
                 {newsData.author}
               </Text>
               <Text
-                className="text-white text-start font-bold flex-auto"
+                className="text-white font-bold flex-auto"
                 numberOfLines={1}
               >
                 {newsData.publishedAt?.substring(0, 10)}
