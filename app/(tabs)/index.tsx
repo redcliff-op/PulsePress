@@ -21,7 +21,7 @@ const Index = () => {
     <SafeAreaView className="flex-1 bg-background px-5 py-2">
       <View className="flex-row justify-between align-middle">
         <Text className="text-white font-bold text-2xl flex-auto">Search</Text>
-        <Image source={{uri: userInfo?.photo?.toString()}} className="w-[35] h-[35] rounded-3xl"></Image>
+        <Image source={{ uri: userInfo?.photo?.toString() }} className="w-[35] h-[35] rounded-3xl"></Image>
       </View>
       <Text className="text-white font-bold text-2xl">Your Daily News</Text>
       <View className="flex-row bg-textFieldBackground my-5 h-[50] rounded-2xl items-center px-5">
@@ -33,8 +33,11 @@ const Index = () => {
           placeholder="Search"
           style={{ color: 'white', paddingHorizontal: 10 }}
           placeholderTextColor="white"
-          keyboardType="web-search"
           multiline={false}
+          onSubmitEditing={()=>{
+            fetchHeadlines(search)
+            setCategory("")
+          }}
         />
       </View>
       <FlatList
