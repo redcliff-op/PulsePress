@@ -6,7 +6,7 @@ interface NewsItem{
   author: string,
   description: string,
   publishedAt: string,
-  url: string
+  url: string,
 }
 
 type UserInfo = {

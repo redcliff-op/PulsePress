@@ -29,7 +29,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="saved"
         options={{
           tabBarIcon: ({color}) =>
             <Image

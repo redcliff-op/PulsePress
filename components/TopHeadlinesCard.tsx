@@ -1,7 +1,6 @@
 import { View, Text, ImageBackground, Pressable } from 'react-native';
 import React from 'react';
 import * as Animatable from 'react-native-animatable';
-import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useNewsProvider } from '@/providers/NewsProvider';
 
@@ -31,7 +30,7 @@ const zoomOut = {
 
 const TopHeadLinesCard = ({ newsData, index, currentIndex }: TopHeadLinesCardProps) => {
   const animationType = index === currentIndex ? zoomIn : zoomOut;
-  const {setCurrentNews} = useNewsProvider()
+  const { setCurrentNews, updateSavedNews, savedNews } = useNewsProvider()
   return (
     <Pressable
       onPress={() => {
@@ -56,7 +55,17 @@ const TopHeadLinesCard = ({ newsData, index, currentIndex }: TopHeadLinesCardPro
               <Text className="flex-auto text-white text-start font-bold overflow-ellipsis" numberOfLines={1}>
                 {newsData.source.name}
               </Text>
-              <Ionicons name='bookmark-outline' size={25} color={'white'} />
+              <Pressable
+                onPress={() => {
+                  updateSavedNews(newsData)
+                }}
+              >
+                <Animatable.Image
+                  source={require('../assets/icons/bookmark.png')}
+                  className='w-[20] h-[20]'
+                  tintColor={(savedNews.findIndex((p) => p.url.toString() === newsData.url.toString()) !== -1) ? '#FFA001' : 'white'}
+                />
+              </Pressable>
             </View>
             <Text className="text-white text-start text-lg font-bold" numberOfLines={2}>
               {newsData.title}

@@ -4,11 +4,11 @@ import { useNewsProvider } from '@/providers/NewsProvider'
 import { Image, Text, View, } from 'react-native-animatable'
 import { StatusBar } from 'expo-status-bar'
 import RecommendedCard from '@/components/RecommendedCard'
-import { Link, router } from 'expo-router'
+import { router } from 'expo-router'
 
 const NewsView = () => {
 
-  const { currentNews, recommended, fetchRecommended } = useNewsProvider()
+  const { currentNews, recommended, fetchRecommended, updateSavedNews, savedNews } = useNewsProvider()
 
   useEffect(() => {
     fetchRecommended(currentNews?.source.id)
@@ -18,8 +18,7 @@ const NewsView = () => {
     <SafeAreaView className="flex-1 bg-background">
       <Image
         source={{ uri: currentNews?.urlToImage }}
-        width={'100%'}
-        height={'30%'}
+        className='w-[100%] h-[30%]'
       >
       </Image>
       <View className='bg-background rounded-t-3xl -mt-5 p-5'>
@@ -84,6 +83,48 @@ const NewsView = () => {
           )
         }}
       ></FlatList>
+      <View className='flex-row px-5 py-2'>
+        <Pressable
+          className='flex-auto pr-1'
+          onPress={() => {
+            currentNews ?
+              updateSavedNews(currentNews) : null
+          }}
+        >
+          <View
+            className='justify-center items-center h-[50] bg-sigYellow rounded-2xl flex-row'
+            animation={'bounce'}
+          >
+            <Image
+              source={require('../assets/icons/bookmark.png')}
+              className='w-[20] h-[20] mr-2'
+              tintColor={'black'}
+            />
+            <Text className='text-lg font-bold'>
+              {(savedNews.findIndex((p) => p.url.toString() === currentNews?.url.toString()) !== -1) ? 'Unsave' : 'Save Article'}
+            </Text>
+          </View>
+        </Pressable>
+        <Pressable
+          className='flex-auto pl-1'
+          onPress={() => {
+          }}
+        >
+          <View
+            className='justify-center flex-row items-center h-[50] bg-sigYellow rounded-2xl'
+            animation={'bounce'}
+          >
+            <Image
+              source={require('../assets/icons/share.png')}
+              className='w-[20] h-[20] mr-2'
+              tintColor={'black'}
+            />
+            <Text className='text-lg font-bold'>
+              Share
+            </Text>
+          </View>
+        </Pressable>
+      </View>
       <StatusBar animated={true} style='dark' />
     </SafeAreaView>
   )
