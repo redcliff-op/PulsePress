@@ -5,6 +5,7 @@ import { Image, Text, View, } from 'react-native-animatable'
 import { StatusBar } from 'expo-status-bar'
 import RecommendedCard from '@/components/RecommendedCard'
 import { router } from 'expo-router'
+import { Share } from 'react-native';
 
 const NewsView = () => {
 
@@ -13,6 +14,13 @@ const NewsView = () => {
   useEffect(() => {
     fetchRecommended(currentNews?.source.id)
   }, [])
+
+  const shareArticle = async (url: string) => {
+    await Share.share({
+      message: `Check out this article: ${url}`,
+      url: url,
+    })
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-background">
@@ -108,6 +116,7 @@ const NewsView = () => {
         <Pressable
           className='flex-auto pl-1'
           onPress={() => {
+            shareArticle(currentNews?.url)
           }}
         >
           <View
