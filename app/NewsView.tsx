@@ -1,11 +1,11 @@
-import { FlatList, Pressable, SafeAreaView, ScrollView } from 'react-native'
+import { Image, Text, View, FlatList, Pressable, SafeAreaView, ScrollView } from 'react-native'
 import React, { useEffect } from 'react'
 import { useNewsProvider } from '@/providers/NewsProvider'
-import { Image, Text, View, } from 'react-native-animatable'
 import { StatusBar } from 'expo-status-bar'
 import RecommendedCard from '@/components/RecommendedCard'
 import { router } from 'expo-router'
 import { Share } from 'react-native';
+import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated'
 
 const NewsView = () => {
 
@@ -24,12 +24,14 @@ const NewsView = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <Image
+      <Animated.Image
         source={{ uri: currentNews?.urlToImage }}
         className='w-[100%] h-[30%]'
+        entering={FadeInUp}
+      />
+      <View
+        className='bg-background rounded-t-3xl -mt-5 p-5'
       >
-      </Image>
-      <View className='bg-background rounded-t-3xl -mt-5 p-5'>
         <ScrollView
           snapToAlignment='start'
           showsHorizontalScrollIndicator={false}
@@ -90,7 +92,7 @@ const NewsView = () => {
             />
           )
         }}
-      ></FlatList>
+      />
       <View className='flex-row px-5 py-2'>
         <Pressable
           className='flex-auto pr-1'
@@ -99,9 +101,9 @@ const NewsView = () => {
               updateSavedNews(currentNews) : null
           }}
         >
-          <View
+          <Animated.View
             className='justify-center items-center h-[50] bg-sigYellow rounded-2xl flex-row'
-            animation={'bounce'}
+            entering={FadeInDown}
           >
             <Image
               source={require('../assets/icons/bookmark.png')}
@@ -111,17 +113,17 @@ const NewsView = () => {
             <Text className='text-lg font-bold'>
               {(savedNews.findIndex((p) => p.url.toString() === currentNews?.url.toString()) !== -1) ? 'Unsave' : 'Save Article'}
             </Text>
-          </View>
+          </Animated.View>
         </Pressable>
         <Pressable
           className='flex-auto pl-1'
           onPress={() => {
-            shareArticle(currentNews?.url)
+            shareArticle(currentNews?.url!!)
           }}
         >
-          <View
+          <Animated.View
             className='justify-center flex-row items-center h-[50] bg-sigYellow rounded-2xl'
-            animation={'bounce'}
+            entering={FadeInDown}
           >
             <Image
               source={require('../assets/icons/share.png')}
@@ -131,7 +133,7 @@ const NewsView = () => {
             <Text className='text-lg font-bold'>
               Share
             </Text>
-          </View>
+          </Animated.View>
         </Pressable>
       </View>
       <StatusBar animated={true} style='dark' />

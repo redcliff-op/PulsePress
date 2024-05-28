@@ -1,8 +1,8 @@
 import { View, Text, ImageBackground, Pressable } from 'react-native';
-import React from 'react';
-import * as Animatable from 'react-native-animatable';
+import React, { useEffect } from 'react';
 import { router } from 'expo-router';
 import { useNewsProvider } from '@/providers/NewsProvider';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 interface TopHeadLinesCardProps {
   newsData: NewsItem;
@@ -10,27 +10,26 @@ interface TopHeadLinesCardProps {
   currentIndex: number;
 }
 
-const zoomIn = {
-  0: {
-    scale: 0.8,
-  },
-  1: {
-    scale: 1,
-  },
-};
-
-const zoomOut = {
-  0: {
-    scale: 1,
-  },
-  1: {
-    scale: 0.8,
-  },
-};
-
 const TopHeadLinesCard = ({ newsData, index, currentIndex }: TopHeadLinesCardProps) => {
-  const animationType = index === currentIndex ? zoomIn : zoomOut;
   const { setCurrentNews, updateSavedNews, savedNews } = useNewsProvider()
+
+  const scale = useSharedValue(index === currentIndex ? 1 : 0.85);
+
+  useEffect(() => {
+    if (index === currentIndex) {
+      scale.value = withTiming(1, { duration: 300 });
+    } else {
+      scale.value = withTiming(0.85, { duration: 300 });
+    }
+  }, [currentIndex, index, scale]);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: scale.value }],
+      elevation: index === currentIndex ? 5 : 2,
+    };
+  });
+
   return (
     <Pressable
       onPress={() => {
@@ -38,10 +37,8 @@ const TopHeadLinesCard = ({ newsData, index, currentIndex }: TopHeadLinesCardPro
         router.navigate('NewsView')
       }
       }>
-      <Animatable.View
-        animation={animationType}
-        duration={300}
-        style={{ elevation: index === currentIndex ? 5 : 2 }}
+      <Animated.View
+        style={[animatedStyle]}
       >
         <ImageBackground
           source={{ uri: newsData.urlToImage }}
@@ -60,7 +57,7 @@ const TopHeadLinesCard = ({ newsData, index, currentIndex }: TopHeadLinesCardPro
                   updateSavedNews(newsData)
                 }}
               >
-                <Animatable.Image
+                <Animated.Image
                   source={require('../assets/icons/bookmark.png')}
                   className='w-[20] h-[20]'
                   tintColor={(savedNews.findIndex((p) => p.url.toString() === newsData.url.toString()) !== -1) ? '#FFA001' : 'white'}
@@ -83,7 +80,7 @@ const TopHeadLinesCard = ({ newsData, index, currentIndex }: TopHeadLinesCardPro
             </View>
           </View>
         </ImageBackground>
-      </Animatable.View>
+      </Animated.View>
     </Pressable>
   );
 };

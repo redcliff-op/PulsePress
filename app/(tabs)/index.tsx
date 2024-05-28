@@ -5,6 +5,8 @@ import { FontAwesome } from '@expo/vector-icons';
 import TopHeadlinesCard from '@/components/TopHeadlinesCard';
 import { useNewsProvider } from '@/providers/NewsProvider';
 import HeadlinesCard from '@/components/HeadlinesCard';
+import Animated, { FadeIn } from 'react-native-reanimated';
+import { Link, router } from 'expo-router';
 
 const Index = () => {
   const [search, setSearch] = useState('');
@@ -21,7 +23,10 @@ const Index = () => {
     <SafeAreaView className="flex-1 bg-background px-5 py-2">
       <View className="flex-row justify-between align-middle">
         <Text className="text-white font-bold text-2xl flex-auto">Search</Text>
-        <Image source={{ uri: userInfo?.photo?.toString() }} className="w-[35] h-[35] rounded-3xl"></Image>
+        <Animated.Image
+          source={{ uri: userInfo?.photo?.toString() }} 
+          className="w-[35] h-[35] rounded-3xl"
+        />
       </View>
       <Text className="text-white font-bold text-2xl">Your Daily News</Text>
       <View className="flex-row bg-textFieldBackground my-5 h-[50] rounded-2xl items-center px-5">
@@ -34,7 +39,7 @@ const Index = () => {
           style={{ color: 'white', paddingHorizontal: 10 }}
           placeholderTextColor="white"
           multiline={false}
-          onSubmitEditing={()=>{
+          onSubmitEditing={() => {
             fetchHeadlines(search)
             setCategory("")
           }}

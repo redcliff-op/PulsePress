@@ -1,8 +1,8 @@
 import { View, Text, ImageBackground, Pressable } from 'react-native';
 import React from 'react';
-import * as Animatable from 'react-native-animatable';
 import { router } from 'expo-router';
 import { useNewsProvider } from '@/providers/NewsProvider';
+import Animated from 'react-native-reanimated';
 
 interface RecommendedCard {
   newsData: NewsItem;
@@ -17,9 +17,8 @@ const RecommendedCard = ({ newsData }: RecommendedCard) => {
         router.navigate('NewsView')
       }
       }>
-      <Animatable.View
+      <Animated.View
         className="mx-2"
-        duration={300}
       >
         <ImageBackground
           source={{ uri: newsData.urlToImage }}
@@ -35,7 +34,7 @@ const RecommendedCard = ({ newsData }: RecommendedCard) => {
             </Text>
           </View>
         </ImageBackground>
-      </Animatable.View>
+      </Animated.View>
     </Pressable>
   );
 };

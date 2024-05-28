@@ -1,8 +1,8 @@
 import { View, Text, Pressable } from 'react-native'
 import React from 'react'
-import { Image } from 'react-native-animatable'
 import { router } from 'expo-router'
 import { useNewsProvider } from '@/providers/NewsProvider'
+import Animated from 'react-native-reanimated'
 
 interface HeadLinesCardProps {
   item: NewsItem
@@ -18,7 +18,7 @@ const HeadlinesCard = ({ item }: HeadLinesCardProps) => {
       }
       }>
       <View className='flex-row py-3'>
-        <Image
+        <Animated.Image
           source={{ uri: item.urlToImage }}
           width={90}
           height={90}

@@ -1,6 +1,5 @@
 import { SafeAreaView } from 'react-native'
 import React from 'react'
-import Constants from 'expo-constants';
 import { useLocalSearchParams } from 'expo-router'
 import WebView from 'react-native-webview';
 

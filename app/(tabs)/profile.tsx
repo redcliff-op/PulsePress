@@ -1,10 +1,10 @@
 import { View, Text, Pressable } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Image } from 'react-native-animatable'
 import { useNewsProvider } from '@/providers/NewsProvider'
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { Link, router } from 'expo-router'
+import { router } from 'expo-router'
+import Animated, { FadeIn } from 'react-native-reanimated';
 
 const profile = () => {
 
@@ -32,12 +32,12 @@ const profile = () => {
             justifyContent: 'center',
           }}
         >
-          <Image
+          <Animated.Image
             source={{ uri: userInfo?.photo?.toString() }}
             className='w-[200] h-[200] rounded-full m-2'
             resizeMode='cover'
-          >
-          </Image>
+            entering={FadeIn}
+          />
         </View>
         <View className='mt-3 mb-2'>
           <Text className='text-white text-2xl font-bold'>
