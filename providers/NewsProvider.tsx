@@ -57,24 +57,26 @@ const NewsProvider = ({ children }: PropsWithChildren) => {
     updateHeadlinesFromLocal()
     const response = await fetch(`https://newsapi.org/v2/everything?q=${news}&apiKey=1f2170ec3cb342678e3d5c74d807c59b`)
     const data = await response.json()
-    await db.execAsync(`delete from headlines`);
-    await db.execAsync(`begin transaction`);
-    data.articles.forEach((headline: { source: { id: any; name: any; }; urlToImage: any; title: any; content: any; author: any; description: any; publishedAt: any; url: any; }) => {
-      db.runAsync('insert into headlines (sourceId, sourceName, urlToImage, title, content, author, description, publishedAt, url) values (?,?,?,?,?,?,?,?,?)',
-        [
-          headline.source.id,
-          headline.source.name,
-          headline.urlToImage,
-          headline.title,
-          headline.content,
-          headline.author,
-          headline.description,
-          headline.publishedAt,
-          headline.url,
-        ]);
-    });
-    await db.execAsync(`commit`);
-    await updateHeadlinesFromLocal()
+    if (data.status === 'ok') {
+      await db.execAsync(`delete from headlines`);
+      await db.execAsync(`begin transaction`);
+      data.articles.forEach((headline: { source: { id: any; name: any; }; urlToImage: any; title: any; content: any; author: any; description: any; publishedAt: any; url: any; }) => {
+        db.runAsync('insert into headlines (sourceId, sourceName, urlToImage, title, content, author, description, publishedAt, url) values (?,?,?,?,?,?,?,?,?)',
+          [
+            headline.source.id,
+            headline.source.name,
+            headline.urlToImage,
+            headline.title,
+            headline.content,
+            headline.author,
+            headline.description,
+            headline.publishedAt,
+            headline.url,
+          ]);
+      });
+      await db.execAsync(`commit`);
+      await updateHeadlinesFromLocal()
+    }
     setLoading(false)
   }
 
@@ -82,24 +84,26 @@ const NewsProvider = ({ children }: PropsWithChildren) => {
     updateTopHeadlinesFromLocal()
     const response = await fetch(`https://newsapi.org/v2/top-headlines?country=in&apiKey=1f2170ec3cb342678e3d5c74d807c59b`)
     const data = await response.json()
-    await db.execAsync(`delete from headlines`);
-    await db.execAsync(`begin transaction`);
-    data.articles.forEach((headline: { source: { id: any; name: any; }; urlToImage: any; title: any; content: any; author: any; description: any; publishedAt: any; url: any; }) => {
-      db.runAsync('insert into topHeadlines (sourceId, sourceName, urlToImage, title, content, author, description, publishedAt, url) values (?,?,?,?,?,?,?,?,?)',
-        [
-          headline.source.id,
-          headline.source.name,
-          headline.urlToImage,
-          headline.title,
-          headline.content,
-          headline.author,
-          headline.description,
-          headline.publishedAt,
-          headline.url,
-        ]);
-    });
-    await db.execAsync(`commit`);
-    updateTopHeadlinesFromLocal()
+    if (data.status === 'ok') {
+      await db.execAsync(`delete from headlines`);
+      await db.execAsync(`begin transaction`);
+      data.articles.forEach((headline: { source: { id: any; name: any; }; urlToImage: any; title: any; content: any; author: any; description: any; publishedAt: any; url: any; }) => {
+        db.runAsync('insert into topHeadlines (sourceId, sourceName, urlToImage, title, content, author, description, publishedAt, url) values (?,?,?,?,?,?,?,?,?)',
+          [
+            headline.source.id,
+            headline.source.name,
+            headline.urlToImage,
+            headline.title,
+            headline.content,
+            headline.author,
+            headline.description,
+            headline.publishedAt,
+            headline.url,
+          ]);
+      });
+      await db.execAsync(`commit`);
+      updateTopHeadlinesFromLocal()
+    }
   }
 
   const fetchRecommended = (sourceID: string | undefined) => {
@@ -109,6 +113,7 @@ const NewsProvider = ({ children }: PropsWithChildren) => {
       const recommended = headlines.filter((p) => p.sourceId === sourceID?.toString())
       setRecommended(recommended)
     }
+
   }
 
   const updateSavedNews = async (news: NewsItem) => {
