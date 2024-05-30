@@ -103,9 +103,12 @@ const NewsProvider = ({ children }: PropsWithChildren) => {
   }
 
   const fetchRecommended = (sourceID: string | undefined) => {
-    setRecommended([])
-    const recommended = headlines.filter((p) => p.sourceId === sourceID?.toString())
-    setRecommended(recommended)
+    if (sourceID === 'clear') {
+      setRecommended([])
+    } else {
+      const recommended = headlines.filter((p) => p.sourceId === sourceID?.toString())
+      setRecommended(recommended)
+    }
   }
 
   const updateSavedNews = async (news: NewsItem) => {

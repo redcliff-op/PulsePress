@@ -1,19 +1,24 @@
 import { Image, Text, View, FlatList, Pressable, SafeAreaView, ScrollView } from 'react-native'
-import React, { useEffect } from 'react'
+import React, { useCallback } from 'react'
 import { useNewsProvider } from '@/providers/NewsProvider'
 import { StatusBar } from 'expo-status-bar'
 import RecommendedCard from '@/components/RecommendedCard'
-import { router } from 'expo-router'
+import { router, useFocusEffect } from 'expo-router'
 import { Share } from 'react-native';
-import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated'
+import Animated, { FadeIn, FadeInDown, FadeInUp, FadeOut } from 'react-native-reanimated'
 
 const NewsView = () => {
 
   const { currentNews, recommended, fetchRecommended, updateSavedNews, savedNews } = useNewsProvider()
 
-  useEffect(() => {
-    fetchRecommended(currentNews?.sourceId)
-  }, [])
+  useFocusEffect(
+    useCallback(() => {
+      fetchRecommended(currentNews?.sourceId)
+      return () => {
+        fetchRecommended('clear')
+      }
+    }, [])
+  );
 
   const shareArticle = async (url: string) => {
     await Share.share({
@@ -77,22 +82,29 @@ const NewsView = () => {
           </Text>
         </Pressable>
       </View>
-      <Text className='text-white mx-5 text-xl font-bold mb-2'>
-        More from {currentNews?.sourceName}
-      </Text>
-      <FlatList
-        className='mx-3'
-        horizontal={true}
-        data={recommended}
-        keyExtractor={(item) => item.url}
-        renderItem={({ item }) => {
-          return (
-            <RecommendedCard
-              newsData={item}
-            />
-          )
-        }}
-      />
+      {recommended.length !== 0 ? (
+        <Animated.View
+          className='flex-1'
+          entering={FadeIn}
+          exiting={FadeOut} 
+        >
+          <Text className='text-white mx-5 text-xl font-bold mb-2'>
+            More from {currentNews?.sourceName}
+          </Text><FlatList
+            className='mx-3'
+            horizontal={true}
+            data={recommended}
+            keyExtractor={(item) => item.url}
+            renderItem={({ item }) => {
+              return (
+                <RecommendedCard
+                  newsData={item} />
+              )
+            }} />
+        </Animated.View>
+      ) : (
+        <View className='flex-1'></View>
+      )}
       <View className='flex-row px-5 py-2'>
         <Pressable
           className='flex-auto pr-1'
