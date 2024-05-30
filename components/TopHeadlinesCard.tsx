@@ -50,7 +50,7 @@ const TopHeadLinesCard = ({ newsData, index, currentIndex }: TopHeadLinesCardPro
           <View className='flex-1 justify-between m-5 flex-shrink-1'>
             <View className='flex-row  justify-between'>
               <Text className="flex-auto text-white text-start font-bold overflow-ellipsis" numberOfLines={1}>
-                {newsData.source.name}
+                {newsData.sourceName}
               </Text>
               <Pressable
                 onPress={() => {

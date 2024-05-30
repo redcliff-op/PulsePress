@@ -1,5 +1,7 @@
 interface NewsItem{
-  source: {id: string, name: string}
+  id: number,
+  sourceId: string,
+  sourceName: string,
   urlToImage: string,
   title: string,
   content: string,

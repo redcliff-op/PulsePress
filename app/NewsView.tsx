@@ -12,7 +12,7 @@ const NewsView = () => {
   const { currentNews, recommended, fetchRecommended, updateSavedNews, savedNews } = useNewsProvider()
 
   useEffect(() => {
-    fetchRecommended(currentNews?.source.id)
+    fetchRecommended(currentNews?.sourceId)
   }, [])
 
   const shareArticle = async (url: string) => {
@@ -40,7 +40,7 @@ const NewsView = () => {
           <View className='bg-textFieldBackground self-start px-3 py-1 rounded-xl mr-2'>
             <Text
               className='text-white'
-            >{currentNews?.source.name}</Text>
+            >{currentNews?.sourceName}</Text>
           </View>
           {currentNews?.author && (
             <View className='self-start px-3 py-1 rounded-xl border-gray-500 border-2 mx-2'>
@@ -78,7 +78,7 @@ const NewsView = () => {
         </Pressable>
       </View>
       <Text className='text-white mx-5 text-xl font-bold mb-2'>
-        More from {currentNews?.source.name}
+        More from {currentNews?.sourceName}
       </Text>
       <FlatList
         className='mx-3'

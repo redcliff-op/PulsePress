@@ -29,7 +29,7 @@ const HeadlinesCard = ({ item }: HeadLinesCardProps) => {
             className='text-gray-400'
             numberOfLines={1}
           >
-            {item.source.name}
+            {item.sourceName}
           </Text>
           <Text
             className='text-white text-base font-bold flex-auto'

@@ -25,6 +25,7 @@ const index = () => {
       if (userData && userData.savedNews) {
         setSavedNews(userData.savedNews)
       }
+      
     }
   }
 

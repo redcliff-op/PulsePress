@@ -10,7 +10,7 @@ import { Link, router } from 'expo-router';
 
 const Index = () => {
   const [search, setSearch] = useState('');
-  const { topHeadlines, fetchTopHeadlines, headlines, fetchHeadlines, loading, userInfo } = useNewsProvider()
+  const { topHeadlines, fetchTopHeadlines, headlines, fetchHeadlines, userInfo, loading, setLoading } = useNewsProvider()
   const [currentIndex, setCurrentIndex] = useState(0);
   const [category, setCategory] = useState("General")
 
@@ -24,7 +24,7 @@ const Index = () => {
       <View className="flex-row justify-between align-middle">
         <Text className="text-white font-bold text-2xl flex-auto">Search</Text>
         <Animated.Image
-          source={{ uri: userInfo?.photo?.toString() }} 
+          source={{ uri: userInfo?.photo?.toString() }}
           className="w-[35] h-[35] rounded-3xl"
         />
       </View>
@@ -48,7 +48,7 @@ const Index = () => {
       <FlatList
         data={topHeadlines}
         className=' flex-initial mb-5'
-        keyExtractor={(item) => item.url}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item, index }) => (
           item.urlToImage ?
             <TopHeadlinesCard
@@ -75,6 +75,7 @@ const Index = () => {
           onPress={() => {
             setCategory('General')
             fetchHeadlines('General')
+            setLoading(true)
           }}>
           <Text
             style={{ backgroundColor: (category === 'General') ? '#283A4A' : '#161622' }}
@@ -88,6 +89,7 @@ const Index = () => {
           onPress={() => {
             setCategory('Sports')
             fetchHeadlines('Sports')
+            setLoading(true)
           }}
         >
           <Text
@@ -102,6 +104,7 @@ const Index = () => {
           onPress={() => {
             setCategory('Technology')
             fetchHeadlines('Technology')
+            setLoading(true)
           }}>
           <Text
             style={{ backgroundColor: (category === 'Technology') ? '#283A4A' : '#161622' }}
@@ -115,6 +118,7 @@ const Index = () => {
           onPress={() => {
             setCategory('Politics')
             fetchHeadlines('Politics')
+            setLoading(true)
           }}
         >
           <Text
@@ -129,6 +133,7 @@ const Index = () => {
           onPress={() => {
             setCategory('Entertainment')
             fetchHeadlines('Entertainment')
+            setLoading(true)
           }}>
           <Text
             style={{ backgroundColor: (category === 'Entertainment') ? '#283A4A' : '#161622' }}
