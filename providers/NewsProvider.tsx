@@ -106,12 +106,18 @@ const NewsProvider = ({ children }: PropsWithChildren) => {
     }
   }
 
-  const fetchRecommended = (sourceID: string | undefined) => {
+  const fetchRecommended = async (sourceID: string | undefined) => {
     if (sourceID === 'clear') {
       setRecommended([])
     } else {
-      const recommended = headlines.filter((p) => p.sourceId === sourceID?.toString())
-      setRecommended(recommended)
+      const response = await fetch(`https://newsapi.org/v2/everything?sources=${sourceID}&apiKey=1f2170ec3cb342678e3d5c74d807c59b`)
+      const data = await response.json()
+      if (data.status === 'ok') {
+        setRecommended(data.articles)
+      } else {
+        const recommended = headlines.filter((p) => p.sourceId === sourceID?.toString())
+        setRecommended(recommended)
+      }
     }
 
   }
