@@ -42,7 +42,8 @@
     "react-native-screens": "3.31.1",
     "react-native-web": "~0.19.10",
     "react-native-webview": "13.8.6",
-    "expo-navigation-bar": "~3.0.4"
+    "expo-navigation-bar": "~3.0.4",
+    "lottie-react-native": "6.7.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
