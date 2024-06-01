@@ -71,7 +71,7 @@ const Index = () => {
         <Pressable
           className='flex-auto'
           onPress={() => {
-            setCategory('General')
+            setCategory('news')
             fetchHeadlines('General')
             setLoading(true)
           }}>
