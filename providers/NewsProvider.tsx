@@ -4,7 +4,11 @@ import * as SQLite from 'expo-sqlite'
 
 type NewsType = {
   userInfo: UserInfo | null,
-  setUserInfo: (user: UserInfo | null) => void
+  setUserInfo: (user: UserInfo | null) => void,
+  language: string,
+  setLanguage: (language: string) => void,
+  country: string,
+  setCountry: (country: string) => void
   topHeadlines: NewsItem[],
   fetchTopHeadlines: () => void,
   headlines: NewsItem[],
@@ -23,6 +27,10 @@ type NewsType = {
 const NewsContext = createContext<NewsType>({
   userInfo: null,
   setUserInfo: (user: UserInfo | null) => { },
+  language: "",
+  setLanguage: (language: string) => { },
+  country: "",
+  setCountry: (country: string) => { },
   topHeadlines: [],
   fetchTopHeadlines: () => { },
   headlines: [],
@@ -46,6 +54,8 @@ const NewsProvider = ({ children }: PropsWithChildren) => {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null)
   const [savedNews, setSavedNews] = useState<NewsItem[]>([])
   const [loading, setLoading] = useState<boolean>(false)
+  const [language, setLanguage] = useState<string>()
+  const [country, setCountry] = useState<string>()
 
   const db = SQLite.openDatabaseSync('News.db');
 
@@ -55,7 +65,7 @@ const NewsProvider = ({ children }: PropsWithChildren) => {
 
   const fetchHeadlines = async (news: string) => {
     updateHeadlinesFromLocal()
-    const response = await fetch(`https://newsapi.org/v2/everything?q=${news}&apiKey=1f2170ec3cb342678e3d5c74d807c59b`)
+    const response = await fetch(`https://newsapi.org/v2/everything?q=${news}&language=${language}&apiKey=1f2170ec3cb342678e3d5c74d807c59b`)
     const data = await response.json()
     if (data.status === 'ok') {
       await db.execAsync(`delete from headlines`);
@@ -82,7 +92,7 @@ const NewsProvider = ({ children }: PropsWithChildren) => {
 
   const fetchTopHeadlines = async () => {
     updateTopHeadlinesFromLocal()
-    const response = await fetch(`https://newsapi.org/v2/top-headlines?country=in&apiKey=1f2170ec3cb342678e3d5c74d807c59b`)
+    const response = await fetch(`https://newsapi.org/v2/top-headlines?country=${country}&language=${language}&apiKey=1f2170ec3cb342678e3d5c74d807c59b`)
     const data = await response.json()
     if (data.status === 'ok') {
       await db.execAsync(`delete from headlines`);
@@ -102,7 +112,7 @@ const NewsProvider = ({ children }: PropsWithChildren) => {
           ]);
       });
       await db.execAsync(`commit`);
-      updateTopHeadlinesFromLocal()
+      await updateTopHeadlinesFromLocal()
     }
   }
 
@@ -110,7 +120,7 @@ const NewsProvider = ({ children }: PropsWithChildren) => {
     if (sourceID === 'clear') {
       setRecommended([])
     } else {
-      const response = await fetch(`https://newsapi.org/v2/everything?sources=${sourceID}&apiKey=1f2170ec3cb342678e3d5c74d807c59b`)
+      const response = await fetch(`https://newsapi.org/v2/everything?sources=${sourceID}&language=${language}&apiKey=1f2170ec3cb342678e3d5c74d807c59b`)
       const data = await response.json()
       if (data.status === 'ok') {
         setRecommended(data.articles)
@@ -193,7 +203,11 @@ const NewsProvider = ({ children }: PropsWithChildren) => {
       updateSavedNews,
       setSavedNews,
       loading,
-      setLoading
+      setLoading,
+      language,
+      setLanguage,
+      country,
+      setCountry
     }}>
       {children}
     </NewsContext.Provider>

@@ -41,7 +41,7 @@ const TopHeadLinesCard = ({ newsData, index, currentIndex }: TopHeadLinesCardPro
         style={[animatedStyle]}
       >
         <ImageBackground
-          source={{ uri: newsData.urlToImage }}
+          source={newsData.urlToImage?{uri: newsData.urlToImage}:require('../assets/images/NoImage.jpg')}
           className="w-[250] h-[200] justify-center shadow-lg shadow-black/40"
           resizeMode="cover"
           blurRadius={40}

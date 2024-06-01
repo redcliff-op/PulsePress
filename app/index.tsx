@@ -8,7 +8,7 @@ import firestore from '@react-native-firebase/firestore';
 
 const index = () => {
 
-  const { setUserInfo, setSavedNews } = useNewsProvider()
+  const { setUserInfo, setSavedNews, setLanguage, setCountry } = useNewsProvider()
 
   GoogleSignin.configure({
     webClientId: "231670128415-klq3tmg19mk9d0sjmpqeph1m0qihcq0m.apps.googleusercontent.com"
@@ -18,14 +18,15 @@ const index = () => {
     const userInfo = await GoogleSignin.getCurrentUser()
     if (userInfo !== null) {
       setUserInfo(userInfo.user)
-      router.navigate(`/(tabs)`)
       const userRef = firestore().collection('Users').doc(userInfo.user.email);
       const userSnapshot = await userRef.get()
       const userData = userSnapshot.data()
       if (userData && userData.savedNews) {
         setSavedNews(userData.savedNews)
+        setLanguage(userData.language)
+        setCountry(userData.country)
       }
-      
+      router.navigate(`/(tabs)`)
     }
   }
 
@@ -34,20 +35,26 @@ const index = () => {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
       setUserInfo(userInfo.user)
-      router.navigate(`/(tabs)`)
       const userRef = firestore().collection('Users').doc(userInfo.user.email);
       const userSnapshot = await userRef.get()
       if (!userSnapshot.exists) {
         userRef.set({
           name: userInfo.user.name,
-          savedNews: []
+          savedNews: [],
+          language: "en",
+          country: "in"
         })
+        setLanguage("en")
+        setCountry("in")
       } else {
         const userData = userSnapshot.data()
-        if (userData && userData.savedNews) {
+        if (userData) {
           setSavedNews(userData.savedNews)
+          setLanguage(userData.language)
+          setCountry(userData.country)
         }
       }
+      router.navigate(`/(tabs)`)
     } catch (error) {
       console.log(error)
     }

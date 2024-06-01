@@ -6,13 +6,12 @@ import TopHeadlinesCard from '@/components/TopHeadlinesCard';
 import { useNewsProvider } from '@/providers/NewsProvider';
 import HeadlinesCard from '@/components/HeadlinesCard';
 import Animated, { FadeIn } from 'react-native-reanimated';
-import { Link, router } from 'expo-router';
 
 const Index = () => {
   const [search, setSearch] = useState('');
   const { topHeadlines, fetchTopHeadlines, headlines, fetchHeadlines, userInfo, loading, setLoading } = useNewsProvider()
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [category, setCategory] = useState("General")
+  const [category, setCategory] = useState("news")
 
   useEffect(() => {
     fetchTopHeadlines()
@@ -50,12 +49,11 @@ const Index = () => {
         className=' flex-initial mb-5'
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item, index }) => (
-          item.urlToImage ?
-            <TopHeadlinesCard
-              newsData={item}
-              index={index}
-              currentIndex={currentIndex}
-            /> : null
+          <TopHeadlinesCard
+            newsData={item}
+            index={index}
+            currentIndex={currentIndex}
+          />
         )}
         showsHorizontalScrollIndicator={false}
 
@@ -78,7 +76,7 @@ const Index = () => {
             setLoading(true)
           }}>
           <Text
-            style={{ backgroundColor: (category === 'General') ? '#283A4A' : '#161622' }}
+            style={{ backgroundColor: (category === 'news') ? '#283A4A' : '#161622' }}
             className='text-white font-bold text-base mx-1 p-2 rounded-xl self-center flex-auto'
           >
             General
