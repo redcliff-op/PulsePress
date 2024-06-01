@@ -129,7 +129,7 @@ const profile = () => {
       </View>
       <View className='flex-1 justify-evenly'>
         <View
-          className='bg-textFieldBackground p-2 rounded-full'>
+          className='bg-textFieldBackground py-2 px-3 rounded-full'>
           <Picker
             selectionColor={'#FFA001'}
             dropdownIconColor={'#FFA001'}
@@ -150,7 +150,7 @@ const profile = () => {
           </Picker>
         </View>
         <View
-          className='bg-textFieldBackground p-2 rounded-full'>
+          className='bg-textFieldBackground py-2 px-3 rounded-full'>
           <Picker
             selectedValue={country}
             onValueChange={handleCountryChange}
