@@ -1,5 +1,5 @@
 import { View, Text, Pressable } from 'react-native';
-import React, { useState } from 'react';
+import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNewsProvider } from '@/providers/NewsProvider';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';

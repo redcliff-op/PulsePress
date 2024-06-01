@@ -1,15 +1,15 @@
-import { View, Text, Image, TextInput, FlatList, ScrollView, Pressable, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, FlatList, ScrollView, Pressable, ActivityIndicator } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome } from '@expo/vector-icons';
 import TopHeadlinesCard from '@/components/TopHeadlinesCard';
 import { useNewsProvider } from '@/providers/NewsProvider';
 import HeadlinesCard from '@/components/HeadlinesCard';
-import Animated, { FadeIn } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 
 const Index = () => {
   const [search, setSearch] = useState('');
-  const {fetchAllHeadlines, topHeadlines, fetchTopHeadlines, headlines, fetchHeadlines, userInfo, loading, setLoading } = useNewsProvider()
+  const {fetchAllHeadlines, topHeadlines, headlines, fetchHeadlines, userInfo, loading, setLoading } = useNewsProvider()
   const [currentIndex, setCurrentIndex] = useState(0);
   const [category, setCategory] = useState("news")
 
