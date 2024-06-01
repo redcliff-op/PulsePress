@@ -26,6 +26,7 @@ const RecommendedCard = ({ newsData }: RecommendedCard) => {
           resizeMode="cover"
           blurRadius={70}
           borderRadius={20}
+          imageStyle={{opacity:0.7}}
           
         >
           <View className='flex-1 justify-center m-3 flex-shrink-1'>
