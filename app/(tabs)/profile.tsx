@@ -9,7 +9,7 @@ import { Picker } from '@react-native-picker/picker';
 import firestore from '@react-native-firebase/firestore';
 
 const profile = () => {
-  const { userInfo, setUserInfo, language, setLanguage, country, setCountry, fetchHeadlines, fetchTopHeadlines } = useNewsProvider();
+  const { fetchAllHeadlines, userInfo, setUserInfo, language, setLanguage, country, setCountry, fetchHeadlines, fetchTopHeadlines } = useNewsProvider();
 
   const signOut = async () => {
     try {
@@ -19,20 +19,18 @@ const profile = () => {
     } catch (e) { }
   };
 
-  const handleLanguageChange = async (language: string) => {
+  const handleLanguageChange = (language: string) => {
     setLanguage(language);
-    fetchHeadlines("news")
-    fetchTopHeadlines()
+    fetchAllHeadlines("news", language, country)
     const userRef = firestore().collection('Users').doc(userInfo?.email);
     userRef.update({
       language: language
     })
   };
 
-  const handleCountryChange = async (country: string) => {
+  const handleCountryChange = (country: string) => {
     setCountry(country)
-    fetchHeadlines("news")
-    fetchTopHeadlines()
+    fetchAllHeadlines("news", language, country)
     const userRef = firestore().collection('Users').doc(userInfo?.email);
     userRef.update({
       country: country

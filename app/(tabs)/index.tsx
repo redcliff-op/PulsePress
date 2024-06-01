@@ -9,13 +9,12 @@ import Animated, { FadeIn } from 'react-native-reanimated';
 
 const Index = () => {
   const [search, setSearch] = useState('');
-  const { topHeadlines, fetchTopHeadlines, headlines, fetchHeadlines, userInfo, loading, setLoading } = useNewsProvider()
+  const {fetchAllHeadlines, topHeadlines, fetchTopHeadlines, headlines, fetchHeadlines, userInfo, loading, setLoading } = useNewsProvider()
   const [currentIndex, setCurrentIndex] = useState(0);
   const [category, setCategory] = useState("news")
 
   useEffect(() => {
-    fetchTopHeadlines()
-    fetchHeadlines(category)
+    fetchAllHeadlines(category)
   }, [])
 
   return (
@@ -72,7 +71,7 @@ const Index = () => {
           className='flex-auto'
           onPress={() => {
             setCategory('news')
-            fetchHeadlines('General')
+            fetchHeadlines('news')
             setLoading(true)
           }}>
           <Text

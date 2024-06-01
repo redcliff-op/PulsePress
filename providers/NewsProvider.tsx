@@ -10,11 +10,12 @@ type NewsType = {
   country: string,
   setCountry: (country: string) => void
   topHeadlines: NewsItem[],
-  fetchTopHeadlines: () => void,
+  fetchTopHeadlines: (lang?: string, ctr?: string) => void,
   headlines: NewsItem[],
-  fetchHeadlines: (news: string) => void,
+  fetchHeadlines: (news: string, lang?: string) => void,
   recommended: NewsItem[],
   fetchRecommended: (sourceID: string | undefined) => void,
+  fetchAllHeadlines: (category: string, lang?: string, ctr?: string) => void,
   currentNews: NewsItem | undefined,
   setCurrentNews: (newsItem: NewsItem) => void,
   savedNews: NewsItem[],
@@ -32,11 +33,12 @@ const NewsContext = createContext<NewsType>({
   country: "",
   setCountry: (country: string) => { },
   topHeadlines: [],
-  fetchTopHeadlines: () => { },
+  fetchTopHeadlines: (lang?: string, ctr?: string) => { },
   headlines: [],
-  fetchHeadlines: (news: string) => { },
+  fetchHeadlines: (news: string, lang?: string) => { },
   recommended: [],
   fetchRecommended: (sourceID: string | undefined) => { },
+  fetchAllHeadlines: (category: string, lang?: string, ctr?: string) => { },
   currentNews: undefined,
   setCurrentNews: (newsItem: NewsItem) => { },
   savedNews: [],
@@ -54,8 +56,8 @@ const NewsProvider = ({ children }: PropsWithChildren) => {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null)
   const [savedNews, setSavedNews] = useState<NewsItem[]>([])
   const [loading, setLoading] = useState<boolean>(false)
-  const [language, setLanguage] = useState<string>()
-  const [country, setCountry] = useState<string>()
+  const [language, setLanguage] = useState<string>("")
+  const [country, setCountry] = useState<string>("")
 
   const db = SQLite.openDatabaseSync('News.db');
 
@@ -63,9 +65,14 @@ const NewsProvider = ({ children }: PropsWithChildren) => {
     initLocalDB()
   }, [])
 
-  const fetchHeadlines = async (news: string) => {
-    updateHeadlinesFromLocal()
-    const response = await fetch(`https://newsapi.org/v2/everything?q=${news}&language=${language}&apiKey=1f2170ec3cb342678e3d5c74d807c59b`)
+  const fetchAllHeadlines = async (category: string, lang: string | undefined = language, ctr: string | undefined = country) => {
+    await fetchTopHeadlines(lang, ctr)
+    await fetchHeadlines(category, lang)
+  }
+
+  const fetchHeadlines = async (news: string, lang: string | undefined = language) => {
+    await updateHeadlinesFromLocal()
+    const response = await fetch(`https://newsapi.org/v2/everything?q=${news}&language=${lang}&apiKey=1f2170ec3cb342678e3d5c74d807c59b`)
     const data = await response.json()
     if (data.status === 'ok') {
       await db.execAsync(`delete from headlines`);
@@ -90,12 +97,12 @@ const NewsProvider = ({ children }: PropsWithChildren) => {
     setLoading(false)
   }
 
-  const fetchTopHeadlines = async () => {
-    updateTopHeadlinesFromLocal()
-    const response = await fetch(`https://newsapi.org/v2/top-headlines?country=${country}&language=${language}&apiKey=1f2170ec3cb342678e3d5c74d807c59b`)
+  const fetchTopHeadlines = async (lang: string | undefined = language, ctr: string | undefined = country) => {
+    await updateTopHeadlinesFromLocal()
+    const response = await fetch(`https://newsapi.org/v2/top-headlines?country=${ctr}&language=${lang}&apiKey=1f2170ec3cb342678e3d5c74d807c59b`)
     const data = await response.json()
     if (data.status === 'ok') {
-      await db.execAsync(`delete from headlines`);
+      await db.execAsync(`delete from topHeadlines`);
       await db.execAsync(`begin transaction`);
       data.articles.forEach((headline: { source: { id: any; name: any; }; urlToImage: any; title: any; content: any; author: any; description: any; publishedAt: any; url: any; }) => {
         db.runAsync('insert into topHeadlines (sourceId, sourceName, urlToImage, title, content, author, description, publishedAt, url) values (?,?,?,?,?,?,?,?,?)',
@@ -207,7 +214,8 @@ const NewsProvider = ({ children }: PropsWithChildren) => {
       language,
       setLanguage,
       country,
-      setCountry
+      setCountry,
+      fetchAllHeadlines
     }}>
       {children}
     </NewsContext.Provider>
