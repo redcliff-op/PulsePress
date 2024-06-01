@@ -46,6 +46,7 @@ const TopHeadLinesCard = ({ newsData, index, currentIndex }: TopHeadLinesCardPro
           resizeMode="cover"
           blurRadius={40}
           borderRadius={20}
+          imageStyle={{ opacity:0.5}}
         >
           <View className='flex-1 justify-between m-5 flex-shrink-1'>
             <View className='flex-row  justify-between'>
