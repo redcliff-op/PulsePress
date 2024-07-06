@@ -15,13 +15,13 @@ type NewsType = {
 
 const NewsContext = createContext<NewsType>({
   topHeadlines: [],
-  fetchTopHeadlines: () => { },
+  fetchTopHeadlines: () => {},
   headlines: [],
-  fetchHeadlines: (news: string) => { },
+  fetchHeadlines: (news: string) => {},
   recommended: [],
-  fetchRecommended: (sourceID: string) => { },
+  fetchRecommended: (sourceID: string) => {},
   currentNews: undefined,
-  setCurrentNews: (newsItem: NewsItem) => { },
+  setCurrentNews: (newsItem: NewsItem) => {},
   loading: false,
 });
 
@@ -31,7 +31,6 @@ const NewsProvider = ({ children }: PropsWithChildren<{}>) => {
   const [recommended, setRecommended] = useState<NewsItem[]>([]);
   const [currentNews, setCurrentNews] = useState<NewsItem>();
   const [loading, setLoading] = useState<boolean>(false);
-
 
   useEffect(() => {
     loadFromStorage();
@@ -50,7 +49,7 @@ const NewsProvider = ({ children }: PropsWithChildren<{}>) => {
       console.error("Error loading data from AsyncStorage:", error);
     }
   };
-
+  
   const saveToStorage = async () => {
     try {
       await AsyncStorage.setItem("topHeadlines", JSON.stringify(topHeadlines));
@@ -64,38 +63,33 @@ const NewsProvider = ({ children }: PropsWithChildren<{}>) => {
   const fetchHeadlines = async (news: string) => {
     setLoading(true);
     const response = await fetch(
-      `https://newsapi.org/v2/everything?q=${news}&apiKey=1f2170  ec3cb342678e3d5c74d807c59b`
+      `https://newsapi.org/v2/everything?q=${news}&apiKey=1f2170ec3c  b342678e3d5c74d807c59b`
     );
     const data = await response.json();
     setHeadlines(data.articles);
     await saveToStorage();
-    await loadFromStorage();
+    await loadFromStorage()
     setLoading(false);
   };
 
   const fetchTopHeadlines = async () => {
     const response = await fetch(
-      "https://newsapi.org/v2/top-headlines?country=in&apiKey=1f  2170ec3cb342678e3d5c74d807c59b"
+      "https://newsapi.org/v2/top-headlines?country=in&apiKey=1f2170ec3  cb342678e3d5c74d807c59b"
     );
     const data = await response.json();
     setTopHeadlines(data.articles);
     await saveToStorage();
-    await loadFromStorage();
+    await loadFromStorage()
   };
 
   const fetchRecommended = async (sourceID: string) => {
-    if (sourceID === 'clear') {
-      setRecommended([])
-    } else {
-      const response = await fetch(`https://newsapi.org/v2/everything?sources=${sourceID}&language=${language}&apiKey=1f2170ec3cb342678e3d5c74d807c59b`)
-      const data = await response.json()
-      if (data.status === 'ok') {
-        setRecommended(data.articles)
-      } else {
-        const recommended = headlines.filter((p) => p.source.id === sourceID?.toString())
-        setRecommended(recommended)
-      }
-    }
+    setLoading(true);
+    const response = await fetch(
+      `https://newsapi.org/v2/everything?sources=${sourceID}&from=2024-05-15&to=2024-05-15&sortBy=popularity&apiKey=1f2170ec3cb342678e3d5c74d807c59b`
+    );
+    const data = await response.json();
+    setRecommended(data.articles);
+    setLoading(false);
   };
 
   return (

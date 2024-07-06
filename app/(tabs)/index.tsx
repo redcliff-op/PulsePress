@@ -10,7 +10,7 @@ const Index = () => {
   const pfp = require('../../assets/images/pfp.jpg');
   const [search, setSearch] = useState('');
   const { topHeadlines, fetchTopHeadlines, headlines, fetchHeadlines, loading } = useNewsProvider();
-  const [category, setCategory] = useState("General");
+  const [category, setCategory] = useState("news");
 
   useEffect(() => {
     fetchTopHeadlines();
@@ -34,7 +34,7 @@ const Index = () => {
           placeholderTextColor="white"
           keyboardType="web-search"
           multiline={false}
-          onSubmitEditing={()=>{
+          onSubmitEditing={() => {
             fetchHeadlines(search)
             setCategory("")
           }}
@@ -45,13 +45,12 @@ const Index = () => {
         style={styles.topHeadlinesList}
         keyExtractor={(item) => item.url}
         renderItem={({ item, index }) => (
-          item.urlToImage ?
-            <TopHeadlinesCard
-              newsData={item}
-            /> : null
+          <TopHeadlinesCard
+            newsData={item}
+          />
         )}
-        showsHorizontalScrollIndicator={false}
-        horizontal={true}
+      showsHorizontalScrollIndicator={false}
+      horizontal={true}
       />
       <ScrollView horizontal style={styles.categoriesScroll} showsHorizontalScrollIndicator={false}>
         {['General', 'Sports', 'Technology', 'Politics', 'Entertainment'].map((cat) => (
@@ -141,10 +140,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   topHeadlinesList: {
-    maxHeight:220
+    maxHeight: 220
   },
   categoriesScroll: {
-    maxHeight:50
+    maxHeight: 50
   },
   categoryText: {
     color: 'white',
@@ -154,7 +153,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 20,
     alignSelf: 'center',
-    
+
   },
   headlinesContainer: {
     flex: 1,
