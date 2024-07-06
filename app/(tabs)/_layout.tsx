@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
-import { Image } from 'react-native-animatable';
+import {Image, StyleSheet} from 'react-native'
 
 
 export default function TabLayout() {
@@ -23,7 +23,7 @@ export default function TabLayout() {
           tabBarIcon: ({color}) =>
             <Image
               source={require('../../assets/icons/home.png')}
-              className='w-[25] h-[25]'
+              style={styles.image}
               tintColor={color}
             />
         }}
@@ -34,7 +34,7 @@ export default function TabLayout() {
           tabBarIcon: ({color}) =>
             <Image
               source={require('../../assets/icons/bookmark.png')}
-              className='w-[25] h-[25]'
+              style={styles.image}
               tintColor={color}
             />
         }}
@@ -45,7 +45,7 @@ export default function TabLayout() {
           tabBarIcon: ({color}) =>
             <Image
               source={require('../../assets/icons/profile.png')}
-              className='w-[25] h-[25]'
+              style={styles.image}
               tintColor={color}
             />
         }}
@@ -53,3 +53,10 @@ export default function TabLayout() {
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  image:{
+    width:25,
+    height:25
+  }
+})

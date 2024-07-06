@@ -8,7 +8,6 @@ export default function RootLayoutNav() {
         <Stack.Screen name='index' options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false, animation: 'fade_from_bottom' }} />
         <Stack.Screen name='NewsView' options={{headerShown:false}}/>
-        <Stack.Screen name='NewsWebView' options={{headerShown:false}}/>
       </Stack>
     </NewsProvider>
   );

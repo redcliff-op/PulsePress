@@ -1,83 +1,110 @@
-import { View, Text, ImageBackground, Pressable } from 'react-native';
+import { View, Text, ImageBackground, Pressable, StyleSheet } from 'react-native';
 import React from 'react';
-import * as Animatable from 'react-native-animatable';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useNewsProvider } from '@/providers/NewsProvider';
 
 interface TopHeadLinesCardProps {
   newsData: NewsItem;
-  index: number;
-  currentIndex: number;
 }
 
-const zoomIn = {
-  0: {
-    scale: 0.8,
-  },
-  1: {
-    scale: 1,
-  },
-};
+const TopHeadLinesCard = ({ newsData }: TopHeadLinesCardProps) => {
+  const { setCurrentNews } = useNewsProvider();
 
-const zoomOut = {
-  0: {
-    scale: 1,
-  },
-  1: {
-    scale: 0.8,
-  },
-};
-
-const TopHeadLinesCard = ({ newsData, index, currentIndex }: TopHeadLinesCardProps) => {
-  const animationType = index === currentIndex ? zoomIn : zoomOut;
-  const {setCurrentNews} = useNewsProvider()
   return (
     <Pressable
       onPress={() => {
-        setCurrentNews(newsData)
-        router.navigate('NewsView')
-      }
-      }>
-      <Animatable.View
-        className="mr-2"
-        animation={animationType}
-        duration={300}
-        style={{ elevation: index === currentIndex ? 5 : 2 }}
-      >
+        setCurrentNews(newsData);
+        router.navigate('NewsView');
+      }}
+    >
+      <View style={styles.container}>
         <ImageBackground
           source={{ uri: newsData.urlToImage }}
-          className="w-[250] h-[200] justify-center shadow-lg shadow-black/40"
+          style={styles.imageBackground}
           resizeMode="cover"
           blurRadius={40}
           borderRadius={20}
         >
-          <View className='flex-1 justify-between m-5 flex-shrink-1'>
-            <View className='flex-row  justify-between'>
-              <Text className="flex-auto text-white text-start font-bold overflow-ellipsis" numberOfLines={1}>
+          <View style={styles.textContainer}>
+            <View style={styles.rowContainer}>
+              <Text style={styles.sourceName} numberOfLines={1}>
                 {newsData.source.name}
               </Text>
               <Ionicons name='bookmark-outline' size={25} color={'white'} />
             </View>
-            <Text className="text-white text-start text-lg font-bold" numberOfLines={2}>
+            <Text style={styles.title} numberOfLines={2}>
               {newsData.title}
             </Text>
-            <View className='flex-row justify-between flex-wrap'>
-              <Text className="text-white text-start font-bold flex-auto mr-3" numberOfLines={1}>
+            <View style={styles.rowContainer}>
+              <Text style={styles.author} numberOfLines={1}>
                 {newsData.author}
               </Text>
-              <Text
-                className="text-white text-start font-bold flex-auto"
-                numberOfLines={1}
-              >
+              <Text style={styles.publishedAt} numberOfLines={1}>
                 {newsData.publishedAt?.substring(0, 10)}
               </Text>
             </View>
           </View>
         </ImageBackground>
-      </Animatable.View>
+      </View>
     </Pressable>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    marginRight: 10,
+    padding:5
+  },
+  imageBackground: {
+    width: 250,
+    height: 200,
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    borderRadius: 20,
+    overflow: 'hidden',
+    padding:5
+  },
+  textContainer: {
+    flex: 1,
+    justifyContent: 'space-between',
+    margin: 10,
+  },
+  rowContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  sourceName: {
+    color: 'white',
+    flex: 1,
+    fontSize: 16, // Adjust font size as needed
+    fontWeight: 'bold',
+    textAlign: 'left',
+    overflow: 'hidden',
+  },
+  title: {
+    color: 'white',
+    fontSize: 20, // Adjust font size as needed
+    fontWeight: 'bold',
+    textAlign: 'left',
+  },
+  author: {
+    color: 'white',
+    flex: 1,
+    fontSize: 14, // Adjust font size as needed
+    fontWeight: 'bold',
+    textAlign: 'left',
+    marginRight: 10,
+  },
+  publishedAt: {
+    color: 'white',
+    fontSize: 14, // Adjust font size as needed
+    fontWeight: 'bold',
+    textAlign: 'left',
+  },
+});
 
 export default TopHeadLinesCard;

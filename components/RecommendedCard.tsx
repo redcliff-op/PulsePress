@@ -1,43 +1,66 @@
-import { View, Text, ImageBackground, Pressable } from 'react-native';
+import { View, Text, ImageBackground, Pressable, StyleSheet } from 'react-native';
 import React from 'react';
-import * as Animatable from 'react-native-animatable';
 import { router } from 'expo-router';
 import { useNewsProvider } from '@/providers/NewsProvider';
 
-interface RecommendedCard {
+interface RecommendedCardProps {
   newsData: NewsItem;
 }
 
-const RecommendedCard = ({ newsData }: RecommendedCard) => {
-  const {setCurrentNews} = useNewsProvider()
+const RecommendedCard = ({ newsData }: RecommendedCardProps) => {
+  const { setCurrentNews } = useNewsProvider();
+
   return (
     <Pressable
       onPress={() => {
-        setCurrentNews(newsData)
-        router.navigate('NewsView')
-      }
-      }>
-      <Animatable.View
-        className="mx-2"
-        duration={300}
-      >
+        setCurrentNews(newsData);
+        router.navigate('NewsView');
+      }}
+    >
+      <View style={styles.container}>
         <ImageBackground
           source={{ uri: newsData.urlToImage }}
-          className="w-[150] h-[150] justify-center shadow-lg shadow-black/40"
+          style={styles.imageBackground}
           resizeMode="cover"
-          blurRadius={70}
+          blurRadius={5}
           borderRadius={20}
-          
         >
-          <View className='flex-1 justify-center m-3 flex-shrink-1'>
-            <Text className="text-white text-start font-bold" numberOfLines={5}>
+          <View style={styles.textContainer}>
+            <Text style={styles.title} numberOfLines={5}>
               {newsData.title}
             </Text>
           </View>
         </ImageBackground>
-      </Animatable.View>
+      </View>
     </Pressable>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    marginHorizontal: 10,
+  },
+  imageBackground: {
+    width: 150,
+    height: 150,
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+  textContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    margin: 10,
+  },
+  title: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16, // Adjust font size as needed
+    textAlign: 'left',
+  },
+});
 
 export default RecommendedCard;

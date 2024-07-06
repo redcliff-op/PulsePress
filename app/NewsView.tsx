@@ -1,92 +1,139 @@
-import { FlatList, Pressable, SafeAreaView, ScrollView } from 'react-native'
-import React, { useEffect } from 'react'
-import { useNewsProvider } from '@/providers/NewsProvider'
-import { Image, Text, View, } from 'react-native-animatable'
-import { StatusBar } from 'expo-status-bar'
-import RecommendedCard from '@/components/RecommendedCard'
-import { Link, router } from 'expo-router'
+import {Image,View, Text, FlatList, Pressable, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import React, { useEffect } from 'react';
+import { useNewsProvider } from '@/providers/NewsProvider';
+import { StatusBar } from 'expo-status-bar';
+import RecommendedCard from '@/components/RecommendedCard';
+import { Link, router } from 'expo-router';
 
 const NewsView = () => {
-
-  const { currentNews, recommended, fetchRecommended } = useNewsProvider()
+  const { currentNews, recommended, fetchRecommended } = useNewsProvider();
 
   useEffect(() => {
-    fetchRecommended(currentNews?.source.id)
-  }, [])
+    fetchRecommended(currentNews?.source.id);
+  }, []);
 
   return (
-    <SafeAreaView className="flex-1 bg-background">
+    <SafeAreaView style={styles.container}>
       <Image
         source={{ uri: currentNews?.urlToImage }}
-        width={'100%'}
-        height={'30%'}
-      >
-      </Image>
-      <View className='bg-background rounded-t-3xl -mt-5 p-5'>
+        style={styles.image}
+      />
+      <View style={styles.newsDetailsContainer}>
         <ScrollView
-          snapToAlignment='start'
+          snapToAlignment="start"
           showsHorizontalScrollIndicator={false}
           horizontal={true}
         >
-          <View className='bg-textFieldBackground self-start px-3 py-1 rounded-xl mr-2'>
-            <Text
-              className='text-white'
-            >{currentNews?.source.name}</Text>
+          <View style={styles.sourceBadge}>
+            <Text style={styles.textWhite}>{currentNews?.source.name}</Text>
           </View>
           {currentNews?.author && (
-            <View className='self-start px-3 py-1 rounded-xl border-gray-500 border-2 mx-2'>
-              <Text
-                className='text-white'
-              >{currentNews?.author}</Text>
+            <View style={styles.authorBadge}>
+              <Text style={styles.textWhite}>{currentNews?.author}</Text>
             </View>
           )}
-          <View className='self-start px-3 py-1 rounded-xl border-gray-500 border-2 mx-2'>
-            <Text
-              className='text-white'
-            >{currentNews?.publishedAt?.substring(0, 10)}</Text>
+          <View style={styles.dateBadge}>
+            <Text style={styles.textWhite}>{currentNews?.publishedAt?.substring(0, 10)}</Text>
           </View>
         </ScrollView>
-        <Text
-          className='text-white text-xl font-bold mt-5'>
-          {currentNews?.title}
-        </Text>
-        <Text
-          className='text-gray-100 mt-5'>
-          {currentNews?.content}
-        </Text>
+        <Text style={styles.title}>{currentNews?.title}</Text>
+        <Text style={styles.content}>{currentNews?.content}</Text>
         <Pressable
           onPress={() => {
             router.navigate({
               pathname: '/NewsWebView',
               params: {
-                newsUrl: currentNews?.url
-              }
-            })
-          }}>
-          <Text className='text-blue-400'>
-            Full Article
-          </Text>
+                newsUrl: currentNews?.url,
+              },
+            });
+          }}
+        >
+          <Text style={styles.fullArticle}>Full Article</Text>
         </Pressable>
       </View>
-      <Text className='text-white mx-5 text-xl font-bold mb-2'>
-        More from {currentNews?.source.name}
-      </Text>
+      <Text style={styles.moreFrom}>{`More from ${currentNews?.source.name}`}</Text>
       <FlatList
-        className='mx-3'
+        style={styles.recommendedList}
         horizontal={true}
         data={recommended}
         keyExtractor={(item) => item.url}
-        renderItem={({ item }) => {
-          return (
-            <RecommendedCard
-              newsData={item}
-            />
-          )
-        }}
-      ></FlatList>
-      <StatusBar animated={true} style='dark' />
+        renderItem={({ item }) => (
+          <RecommendedCard newsData={item} />
+        )}
+      />
+      <StatusBar animated={true} style="dark" />
     </SafeAreaView>
-  )
-}
+  );
+};
 
-export default NewsView
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#1a1a1a', // Assuming bg-background corresponds to a dark color
+  },
+  image: {
+    width: '100%',
+    height: '50%',
+  },
+  newsDetailsContainer: {
+    backgroundColor: '#1a1a1a', // Assuming bg-background corresponds to a dark color
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    marginTop: -20,
+    padding: 20,
+  },
+  sourceBadge: {
+    backgroundColor: '#2e2e2e', // Assuming bg-textFieldBackground corresponds to a specific color
+    alignSelf: 'flex-start',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 10,
+    marginRight: 10,
+  },
+  authorBadge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 10,
+    borderColor: '#777', // Assuming border-gray-500 corresponds to a specific color
+    borderWidth: 2,
+    marginHorizontal: 10,
+  },
+  dateBadge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 10,
+    borderColor: '#777', // Assuming border-gray-500 corresponds to a specific color
+    borderWidth: 2,
+    marginHorizontal: 10,
+  },
+  textWhite: {
+    color: 'white',
+  },
+  title: {
+    color: 'white',
+    fontSize: 24, // Adjust font size as needed
+    fontWeight: 'bold',
+    marginTop: 20,
+  },
+  content: {
+    color: '#ccc', // Assuming text-gray-100 corresponds to a specific color
+    marginTop: 20,
+  },
+  fullArticle: {
+    color: '#00f', // Assuming text-blue-400 corresponds to a specific color
+  },
+  moreFrom: {
+    color: 'white',
+    marginHorizontal: 20,
+    fontSize: 24, // Adjust font size as needed
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  recommendedList: {
+    marginHorizontal: 20,
+  },
+});
+
+export default NewsView;

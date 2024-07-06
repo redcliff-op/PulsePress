@@ -1,45 +1,42 @@
-import { View, Text, Pressable } from 'react-native'
-import React from 'react'
-import { Image } from 'react-native-animatable'
-import { router } from 'expo-router'
-import { useNewsProvider } from '@/providers/NewsProvider'
+import { View, Text, Pressable, Image, StyleSheet } from 'react-native';
+import React from 'react';
+import { router } from 'expo-router';
+import { useNewsProvider } from '@/providers/NewsProvider';
 
 interface HeadLinesCardProps {
-  item: NewsItem
+  item: NewsItem;
 }
 
 const HeadlinesCard = ({ item }: HeadLinesCardProps) => {
-  const { setCurrentNews } = useNewsProvider()
+  const { setCurrentNews } = useNewsProvider();
+  
   return (
     <Pressable
       onPress={() => {
-        setCurrentNews(item)
-        router.navigate('NewsView')
-      }
-      }>
-      <View className='flex-row py-3'>
+        setCurrentNews(item);
+        router.navigate('NewsView');
+      }}
+    >
+      <View style={styles.cardContainer}>
         <Image
           source={{ uri: item.urlToImage }}
-          width={90}
-          height={90}
-          borderRadius={20}
+          style={styles.image}
         />
-        <View className='mx-5 justify-between flex-auto'>
+        <View style={styles.textContainer}>
           <Text
-            className='text-gray-400'
+            style={styles.sourceName}
             numberOfLines={1}
           >
             {item.source.name}
           </Text>
           <Text
-            className='text-white text-base font-bold flex-auto'
+            style={styles.title}
             numberOfLines={2}
-            style={{flexShrink:1}}
           >
             {item.title}
           </Text>
           <Text
-            className='text-gray-400 flex-auto'
+            style={styles.date}
             numberOfLines={1}
           >
             {item.publishedAt?.substring(0, 10)}
@@ -47,7 +44,36 @@ const HeadlinesCard = ({ item }: HeadLinesCardProps) => {
         </View>
       </View>
     </Pressable>
-  )
-}
+  );
+};
 
-export default HeadlinesCard
+const styles = StyleSheet.create({
+  cardContainer: {
+    flexDirection: 'row',
+    paddingVertical: 10,
+  },
+  image: {
+    width: 90,
+    height: 90,
+    borderRadius: 20,
+  },
+  textContainer: {
+    marginLeft: 20,
+    justifyContent: 'space-between',
+    flex: 1,
+  },
+  sourceName: {
+    color: '#888', // Assuming text-gray-400 corresponds to this color
+  },
+  title: {
+    color: 'white',
+    fontSize: 16, // Adjust font size as needed
+    fontWeight: 'bold',
+    flexShrink: 1,
+  },
+  date: {
+    color: '#888', // Assuming text-gray-400 corresponds to this color
+  },
+});
+
+export default HeadlinesCard;

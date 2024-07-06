@@ -1,4 +1,4 @@
-import { View, Text, Image, TextInput, FlatList, ScrollView, Pressable, ActivityIndicator } from 'react-native';
+import { View, Text, Image, TextInput, FlatList, ScrollView, Pressable, ActivityIndicator, StyleSheet } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome } from '@expo/vector-icons';
@@ -9,132 +9,79 @@ import HeadlinesCard from '@/components/HeadlinesCard';
 const Index = () => {
   const pfp = require('../../assets/images/pfp.jpg');
   const [search, setSearch] = useState('');
-  const { topHeadlines, fetchTopHeadlines, headlines, fetchHeadlines, loading } = useNewsProvider()
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [category, setCategory] = useState("General")
+  const { topHeadlines, fetchTopHeadlines, headlines, fetchHeadlines, loading } = useNewsProvider();
+  const [category, setCategory] = useState("General");
 
   useEffect(() => {
-    fetchTopHeadlines()
-    fetchHeadlines(category)
-  }, [])
+    fetchTopHeadlines();
+    fetchHeadlines(category);
+  }, []);
 
   return (
-    <SafeAreaView className="flex-1 bg-background px-5 py-2">
-      <View className="flex-row justify-between align-middle">
-        <Text className="text-white font-bold text-2xl">Search</Text>
-        <Image source={pfp} className="w-[35] h-[35] rounded-3xl"></Image>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Search</Text>
+        <Image source={pfp} style={styles.pfp} />
       </View>
-      <Text className="text-white font-bold text-2xl">Your Daily News</Text>
-      <View className="flex-row bg-textFieldBackground my-5 h-[50] rounded-2xl items-center px-5">
+      <Text style={styles.title}>Your Daily News</Text>
+      <View style={styles.searchContainer}>
         <FontAwesome name="search" color={'white'} size={20} />
         <TextInput
           value={search}
-          className="flex-1"
+          style={styles.searchInput}
           onChangeText={setSearch}
           placeholder="Search"
-          style={{ color: 'white', paddingHorizontal: 10 }}
           placeholderTextColor="white"
           keyboardType="web-search"
           multiline={false}
+          onSubmitEditing={()=>{
+            fetchHeadlines(search)
+            setCategory("")
+          }}
         />
       </View>
       <FlatList
         data={topHeadlines}
-        className=' flex-initial mb-5'
+        style={styles.topHeadlinesList}
         keyExtractor={(item) => item.url}
         renderItem={({ item, index }) => (
           item.urlToImage ?
             <TopHeadlinesCard
               newsData={item}
-              index={index}
-              currentIndex={currentIndex}
             /> : null
         )}
         showsHorizontalScrollIndicator={false}
-
-        onViewableItemsChanged={(res) => {
-          if (res.viewableItems.length) {
-            setCurrentIndex(res.changed[0].index || 0)
-          }
-        }}
-        viewabilityConfig={{
-          itemVisiblePercentThreshold: 300
-        }}
         horizontal={true}
       />
-      <ScrollView horizontal className='flex-initial mb-2' showsHorizontalScrollIndicator={false}>
-        <Pressable
-          onPress={() => {
-            setCategory('General')
-            fetchHeadlines('General')
-          }}>
-          <Text
-            style={{ backgroundColor: (category === 'General') ? '#283A4A' : '#161622' }}
-            className='text-white font-bold text-base mx-1 p-2 rounded-xl self-center flex-auto'
+      <ScrollView horizontal style={styles.categoriesScroll} showsHorizontalScrollIndicator={false}>
+        {['General', 'Sports', 'Technology', 'Politics', 'Entertainment'].map((cat) => (
+          <Pressable
+            key={cat}
+            onPress={() => {
+              setCategory(cat);
+              fetchHeadlines(cat);
+            }}
           >
-            General
-          </Text>
-        </Pressable>
-        <Pressable
-          onPress={() => {
-            setCategory('Sports')
-            fetchHeadlines('Sports')
-          }}
-        >
-          <Text
-            style={{ backgroundColor: (category === 'Sports') ? '#283A4A' : '#161622' }}
-            className='text-white font-bold text-base mx-1 p-2 rounded-2xl self-center flex-auto'
-          >
-            Sports
-          </Text>
-        </Pressable>
-        <Pressable
-          onPress={() => {
-            setCategory('Technology')
-            fetchHeadlines('Technology')
-          }}>
-          <Text
-            style={{ backgroundColor: (category === 'Technology') ? '#283A4A' : '#161622' }}
-            className='text-white font-bold text-base mx-1 p-2 rounded-2xl self-center flex-auto'
-          >
-            Technology
-          </Text>
-        </Pressable>
-        <Pressable
-          onPress={() => {
-            setCategory('Politics')
-            fetchHeadlines('Politics')
-          }}
-        >
-          <Text
-            style={{ backgroundColor: (category === 'Politics') ? '#283A4A' : '#161622' }}
-            className='text-white font-bold text-base mx-1 p-2 rounded-2xl self-center flex-auto'
-          >
-            Politics
-          </Text>
-        </Pressable>
-        <Pressable
-          onPress={() => {
-            setCategory('Entertainment')
-            fetchHeadlines('Entertainment')
-          }}>
-          <Text
-            style={{ backgroundColor: (category === 'Entertainment') ? '#283A4A' : '#161622' }}
-            className='text-white font-bold text-base mx-1 p-2 rounded-2xl self-center flex-auto'
-          >
-            Entertainment
-          </Text>
-        </Pressable>
+            <Text
+              style={[
+                styles.categoryText,
+                { backgroundColor: (category === cat) ? '#283A4A' : '#161622' }
+              ]}
+            >
+              {cat}
+            </Text>
+          </Pressable>
+        ))}
       </ScrollView>
-      <View className="flex-1">
+      <View style={styles.headlinesContainer}>
         {loading ? (
-          <View className="flex-1 justify-center items-center">
+          <View style={styles.loadingContainer}>
             <ActivityIndicator size={50} color="white" />
           </View>
         ) : (
           <FlatList
             data={headlines}
-            className='flex-initial'
+            style={styles.headlinesList}
             renderItem={({ item }) => {
               return (
                 (item.urlToImage) ?
@@ -150,5 +97,75 @@ const Index = () => {
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#1a1a1a',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  headerText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 24,
+  },
+  pfp: {
+    width: 35,
+    height: 35,
+    borderRadius: 35 / 2,
+  },
+  title: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 24,
+    marginTop: 10,
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#2e2e2e',
+    marginVertical: 20,
+    height: 50,
+    borderRadius: 25,
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  searchInput: {
+    flex: 1,
+    color: 'white',
+    paddingHorizontal: 10,
+  },
+  topHeadlinesList: {
+    maxHeight:220
+  },
+  categoriesScroll: {
+    maxHeight:50
+  },
+  categoryText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginHorizontal: 5,
+    padding: 10,
+    borderRadius: 20,
+    alignSelf: 'center',
+    
+  },
+  headlinesContainer: {
+    flex: 1,
+  },
+  loadingContainer: {
+    flex: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headlinesList: {
+  },
+});
 
 export default Index;
