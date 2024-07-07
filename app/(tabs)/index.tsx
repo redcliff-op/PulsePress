@@ -5,6 +5,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import TopHeadlinesCard from '@/components/TopHeadlinesCard';
 import { useNewsProvider } from '@/providers/NewsProvider';
 import HeadlinesCard from '@/components/HeadlinesCard';
+import { DraggableScrollView } from '../../DraggableScrollView'
 
 const Index = () => {
   const pfp = require('../../assets/images/pfp.jpg');
@@ -19,59 +20,6 @@ const Index = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Search</Text>
-        <Image source={pfp} style={styles.pfp} />
-      </View>
-      <Text style={styles.title}>Your Daily News</Text>
-      <View style={styles.searchContainer}>
-        <FontAwesome name="search" color={'white'} size={20} />
-        <TextInput
-          value={search}
-          style={styles.searchInput}
-          onChangeText={setSearch}
-          placeholder="Search"
-          placeholderTextColor="white"
-          keyboardType="web-search"
-          multiline={false}
-          onSubmitEditing={() => {
-            fetchHeadlines(search)
-            setCategory("")
-          }}
-        />
-      </View>
-      <FlatList
-        data={topHeadlines}
-        style={styles.topHeadlinesList}
-        keyExtractor={(item) => item.url}
-        renderItem={({ item, index }) => (
-          <TopHeadlinesCard
-            newsData={item}
-          />
-        )}
-      showsHorizontalScrollIndicator={false}
-      horizontal={true}
-      />
-      <ScrollView horizontal style={styles.categoriesScroll} showsHorizontalScrollIndicator={false}>
-        {['General', 'Sports', 'Technology', 'Politics', 'Entertainment'].map((cat) => (
-          <Pressable
-            key={cat}
-            onPress={() => {
-              setCategory(cat);
-              fetchHeadlines(cat);
-            }}
-          >
-            <Text
-              style={[
-                styles.categoryText,
-                { backgroundColor: (category === cat) ? '#283A4A' : '#161622' }
-              ]}
-            >
-              {cat}
-            </Text>
-          </Pressable>
-        ))}
-      </ScrollView>
       <View style={styles.headlinesContainer}>
         {loading ? (
           <View style={styles.loadingContainer}>
@@ -83,13 +31,70 @@ const Index = () => {
             style={styles.headlinesList}
             renderItem={({ item }) => {
               return (
-                (item.urlToImage) ?
+                (item.urlToImage ) ?
                   <HeadlinesCard
                     item={item}
                   /> : null
               )
             }}
             showsVerticalScrollIndicator={false}
+            ListHeaderComponent={() =>
+              <View>
+                <View style={styles.header}>
+                  <Text style={styles.headerText}>Search</Text>
+                  <Image source={pfp} style={styles.pfp} />
+                </View>
+                <Text style={styles.title}>Your Daily News</Text>
+                <View style={styles.searchContainer}>
+                  <FontAwesome name="search" color={'white'} size={20} />
+                  <TextInput
+                    value={search}
+                    style={styles.searchInput}
+                    onChangeText={setSearch}
+                    placeholder="Search"
+                    placeholderTextColor="white"
+                    keyboardType="web-search"
+                    multiline={false}
+                    onSubmitEditing={() => {
+                      fetchHeadlines(search)
+                      setCategory("")
+                    }}
+                  />
+                </View>
+                <DraggableScrollView
+                  horizontal={true}
+                  showsHorizontalScrollIndicator={false}
+                  style={styles.topHeadlinesList}
+                >
+                  {topHeadlines.map((item, index) => (
+                    <TopHeadlinesCard
+                      key={item.url}
+                      newsData={item}
+                    />
+                  ))}
+                </DraggableScrollView>
+                <ScrollView horizontal style={styles.categoriesScroll} showsHorizontalScrollIndicator={false}>
+                  {['General', 'Sports', 'Technology', 'Politics', 'Entertainment'].map((cat) => (
+                    <Pressable
+                      key={cat}
+                      onPress={() => {
+                        setCategory(cat);
+                        fetchHeadlines(cat);
+                      }}
+                    >
+                      <Text
+                        style={[
+                          styles.categoryText,
+                          { backgroundColor: (category === cat) ? '#283A4A' : '#161622' }
+                        ]}
+                      >
+                        {cat}
+                      </Text>
+                    </Pressable>
+                  ))}
+                </ScrollView>
+              </View>
+            }
           />
         )}
       </View>
@@ -102,7 +107,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#161622',
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingVertical: 20,
   },
   header: {
     flexDirection: 'row',
@@ -140,7 +145,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   topHeadlinesList: {
-    maxHeight: 220
+    maxHeight: 220,
+    marginBottom:10
   },
   categoriesScroll: {
     maxHeight: 50
@@ -159,7 +165,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   loadingContainer: {
-    flex: 0,
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },

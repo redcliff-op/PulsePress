@@ -79,15 +79,16 @@ const Profile = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
+      <Text style={{fontSize:24, fontWeight:'bold', color:'white'}}>
+        Switch Language and Region!
+      </Text>
+      <View>
         <View style={styles.pickerContainer}>
           <Picker
-            selectionColor={'#FFA001'}
-            dropdownIconColor={'#FFA001'}
-            dropdownIconRippleColor={'#FFA001'}
             selectedValue={language}
             onValueChange={handleLanguageChange}
             mode='dropdown'
+            style={styles.picker}
           >
             {languages.map((language) => (
               <Picker.Item
@@ -95,7 +96,6 @@ const Profile = () => {
                 value={language.code}
                 key={language.code}
                 color='#FFA001'
-                style={styles.pickerItem}
               />
             ))}
           </Picker>
@@ -104,10 +104,8 @@ const Profile = () => {
           <Picker
             selectedValue={country}
             onValueChange={handleCountryChange}
-            selectionColor={'#FFA001'}
-            dropdownIconColor={'#FFA001'}
-            dropdownIconRippleColor={'#FFA001'}
-            mode='dropdown'
+            mode='dialog'
+            style={styles.picker}
           >
             {countries.map((country) => (
               <Picker.Item
@@ -115,7 +113,6 @@ const Profile = () => {
                 value={country.code}
                 key={country.code}
                 color='#FFA001'
-                style={styles.pickerItem}
               />
             ))}
           </Picker>
@@ -131,20 +128,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#161622',
     paddingHorizontal: 20,
     paddingVertical: 10,
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'space-evenly',
+    justifyContent:'center'
   },
   pickerContainer: {
     backgroundColor: '#283A4A',
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderRadius: 50,
+    marginVertical:5
   },
-  pickerItem: {
+  picker: {
     backgroundColor: '#283A4A',
-  }
+    borderColor: '#283A4A',
+    color: '#FFA001',
+  },
 });
 
 export default Profile;

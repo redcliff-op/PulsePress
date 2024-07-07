@@ -24,6 +24,7 @@ const RecommendedCard = ({ newsData }: RecommendedCardProps) => {
           resizeMode="cover"
           blurRadius={5}
           borderRadius={20}
+          imageStyle={{opacity:0.5}}
         >
           <View style={styles.textContainer}>
             <Text style={styles.title} numberOfLines={5}>
@@ -45,9 +46,6 @@ const styles = StyleSheet.create({
     height: 150,
     justifyContent: 'center',
     alignItems:'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.4,
-    shadowRadius: 10,
     borderRadius: 20,
     overflow: 'hidden',
   },

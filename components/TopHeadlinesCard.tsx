@@ -25,6 +25,7 @@ const TopHeadLinesCard = ({ newsData }: TopHeadLinesCardProps) => {
           resizeMode="cover"
           blurRadius={40}
           borderRadius={20}
+          imageStyle={{opacity:0.7}}
         >
           <View style={styles.textContainer}>
             <View style={styles.rowContainer}>

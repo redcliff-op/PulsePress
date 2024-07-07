@@ -13,7 +13,7 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor:'#161622',
           borderTopWidth:0,
-          height:50
+          height:40,
         }
       }}
     >
@@ -29,7 +29,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="saved"
         options={{
           tabBarIcon: ({color}) =>
             <Image
@@ -57,6 +57,7 @@ export default function TabLayout() {
 const styles = StyleSheet.create({
   image:{
     width:25,
-    height:25
+    height:25,
+    marginBottom:25
   }
 })

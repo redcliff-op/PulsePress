@@ -1,28 +1,35 @@
-import {Image,View, Text, FlatList, Pressable, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
-import React, { useEffect } from 'react';
+import { Image, View, Text, FlatList, Pressable, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import React, { useCallback, useEffect } from 'react';
 import { useNewsProvider } from '@/providers/NewsProvider';
 import { StatusBar } from 'expo-status-bar';
 import RecommendedCard from '@/components/RecommendedCard';
-import { Link, router } from 'expo-router';
+import { Link, router, useFocusEffect } from 'expo-router';
+import { DraggableScrollView } from '@/DraggableScrollView';
+import Animated, { FadeIn, FadeInUp, FadeOut } from 'react-native-reanimated';
 
 const NewsView = () => {
   const { currentNews, recommended, fetchRecommended } = useNewsProvider();
 
-  useEffect(() => {
-    fetchRecommended(currentNews?.source.id);
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchRecommended(currentNews?.source.id)
+      return () => {
+        fetchRecommended('clear')
+      }
+    }, [])
+  );
 
   return (
     <SafeAreaView style={styles.container}>
-      <Image
+      <Animated.Image
+        entering={FadeInUp}
+        fadeDuration={800}
         source={{ uri: currentNews?.urlToImage }}
         style={styles.image}
       />
-      <View style={styles.newsDetailsContainer}>
-        <ScrollView
-          snapToAlignment="start"
-          showsHorizontalScrollIndicator={false}
-          horizontal={true}
+      <ScrollView style={styles.newsDetailsContainer} showsHorizontalScrollIndicator={false} snapToAlignment='start'>
+        <View
+          style={{ flexDirection: 'row' }}
         >
           <View style={styles.sourceBadge}>
             <Text style={styles.textWhite}>{currentNews?.source.name}</Text>
@@ -35,7 +42,7 @@ const NewsView = () => {
           <View style={styles.dateBadge}>
             <Text style={styles.textWhite}>{currentNews?.publishedAt?.substring(0, 10)}</Text>
           </View>
-        </ScrollView>
+        </View>
         <Text style={styles.title}>{currentNews?.title}</Text>
         <Text style={styles.content}>{currentNews?.content}</Text>
         <Pressable
@@ -50,17 +57,24 @@ const NewsView = () => {
         >
           <Text style={styles.fullArticle}>Full Article</Text>
         </Pressable>
-      </View>
-      <Text style={styles.moreFrom}>{`More from ${currentNews?.source.name}`}</Text>
-      <FlatList
-        style={styles.recommendedList}
-        horizontal={true}
-        data={recommended}
-        keyExtractor={(item) => item.url}
-        renderItem={({ item }) => (
-          <RecommendedCard newsData={item} />
-        )}
-      />
+        {(recommended.length !== 0) ?
+          <Animated.View entering={FadeIn} exiting={FadeOut}>
+            <Text style={styles.moreFrom}>{`More from ${currentNews?.source.name}`}</Text>
+            <DraggableScrollView
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+              style={{}}
+            >
+              {recommended.map((item, index) => (
+                <RecommendedCard
+                  key={item.url}
+                  newsData={item}
+                />
+              ))}
+            </DraggableScrollView>
+          </Animated.View>
+          : <View></View>}
+      </ScrollView>
       <StatusBar animated={true} style="dark" />
     </SafeAreaView>
   );
@@ -126,13 +140,9 @@ const styles = StyleSheet.create({
   },
   moreFrom: {
     color: 'white',
-    marginHorizontal: 20,
     fontSize: 24, // Adjust font size as needed
     fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  recommendedList: {
-    marginHorizontal: 20,
+    marginVertical: 10,
   },
 });
 

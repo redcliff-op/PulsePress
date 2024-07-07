@@ -164,7 +164,11 @@ const NewsProvider = ({ children }: PropsWithChildren<{}>) => {
       `https://newsapi.org/v2/everything?sources=${sourceID}&sortBy=popularity&apiKey=1f2170ec3cb342678e3d5c74d807c59b`
     );
     const data = await response.json();
-    setRecommended(data.articles);
+    if(data.status==='ok'){
+      setRecommended(data.articles);
+    }else{
+      setRecommended(headlines.filter((p)=>p.source.id.toString()===sourceID.toString()))
+    }
     setLoading(false);
   };
 
