@@ -100,7 +100,7 @@ const Index = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a1a',
+    backgroundColor: '#161622',
     paddingHorizontal: 20,
     paddingVertical: 10,
   },
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     flexDirection: 'row',
-    backgroundColor: '#2e2e2e',
+    backgroundColor: '#283A4A',
     marginVertical: 20,
     height: 50,
     borderRadius: 25,
