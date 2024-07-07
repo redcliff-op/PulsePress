@@ -7,26 +7,36 @@ import { Headlines, TopHeadlines } from '../model/Model'
 
 type NewsType = {
   topHeadlines: NewsItem[];
-  fetchTopHeadlines: () => void;
+  fetchTopHeadlines: (lang?: string, ctr?: string) => void;
   headlines: NewsItem[];
-  fetchHeadlines: (news: string) => void;
+  fetchHeadlines: (news: string, lang?: string) => void;
   recommended: NewsItem[];
   fetchRecommended: (sourceID: string) => void;
+  fetchAllHeadlines: (category: string, lang?: string, ctr?: string) => void,
   currentNews: NewsItem | undefined;
   setCurrentNews: (newsItem: NewsItem) => void;
   loading: boolean;
+  language: string,
+  setLanguage: (language: string) => void,
+  country: string,
+  setCountry: (country: string) => void
 };
 
 const NewsContext = createContext<NewsType>({
   topHeadlines: [],
-  fetchTopHeadlines: () => { },
+  fetchTopHeadlines: (lang?: string, ctr?: string) => { },
   headlines: [],
-  fetchHeadlines: (news: string) => { },
+  fetchHeadlines: (news: string, lang?: string) => { },
   recommended: [],
   fetchRecommended: (sourceID: string) => { },
   currentNews: undefined,
   setCurrentNews: (newsItem: NewsItem) => { },
+  fetchAllHeadlines: (category: string, lang?: string, ctr?: string) => { },
   loading: false,
+  language: "",
+  setLanguage: (language: string) => { },
+  country: "",
+  setCountry: (country: string) => { }
 });
 
 const adapter = new LokiJSAdapter({
@@ -60,6 +70,8 @@ const NewsProvider = ({ children }: PropsWithChildren<{}>) => {
   const [recommended, setRecommended] = useState<NewsItem[]>([]);
   const [currentNews, setCurrentNews] = useState<NewsItem>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [language, setLanguage] = useState<string>("en")
+  const [country, setCountry] = useState<string>("in")
 
   useEffect(() => {
     loadHeadlinesFromDB();
@@ -121,11 +133,14 @@ const NewsProvider = ({ children }: PropsWithChildren<{}>) => {
     setTopHeadlines(formattedTopHeadlines);
   };
 
-  const fetchHeadlines = async (news: string) => {
+  const fetchAllHeadlines = async (category: string, lang: string | undefined = language, ctr: string | undefined = country) => {
+    await fetchTopHeadlines(lang, ctr)
+    await fetchHeadlines(category, lang)
+  }
+
+  const fetchHeadlines = async (news: string, lang: string | undefined = language) => {
     setLoading(true);
-    const response = await fetch(
-      `https://newsapi.org/v2/everything?q=${news}&apiKey=1f2170ec3cb34 2678e3d5c74d807c59b`
-    );
+    const response = await fetch(`https://newsapi.org/v2/everything?q=${news}&language=${lang}&apiKey=1f2170ec3cb342678e3d5c74d807c59b`)
     const data = await response.json();
     if (data.status === 'ok') {
       await saveHeadlinesToDB(data.articles, database.collections.get('headlines'))
@@ -134,10 +149,8 @@ const NewsProvider = ({ children }: PropsWithChildren<{}>) => {
     setLoading(false);
   };
 
-  const fetchTopHeadlines = async () => {
-    const response = await fetch(
-      "https://newsapi.org/v2/top-headlines?country=in&apiKey=1f2170ec3c b342678e3d5c74d807c59b"
-    );
+  const fetchTopHeadlines = async (lang: string | undefined = language, ctr: string | undefined = country) => {
+    const response = await fetch(`https://newsapi.org/v2/top-headlines?country=${ctr}&language=${lang}&apiKey=1f2170ec3cb342678e3d5c74d807c59b`)
     const data = await response.json();
     if (data.status === 'ok') {
       await saveHeadlinesToDB(data.articles, database.collections.get('top_headlines'));
@@ -148,7 +161,7 @@ const NewsProvider = ({ children }: PropsWithChildren<{}>) => {
   const fetchRecommended = async (sourceID: string) => {
     setLoading(true);
     const response = await fetch(
-      `https://newsapi.org/v2/everything?sources=${sourceID}&from=2024-05-15&to=2024-05-15&sortBy=popularity&apiKey=1f2170ec3cb342678e3d5c74d807c59b`
+      `https://newsapi.org/v2/everything?sources=${sourceID}&sortBy=popularity&apiKey=1f2170ec3cb342678e3d5c74d807c59b`
     );
     const data = await response.json();
     setRecommended(data.articles);
@@ -167,6 +180,11 @@ const NewsProvider = ({ children }: PropsWithChildren<{}>) => {
         recommended,
         fetchRecommended,
         loading,
+        language,
+        setLanguage,
+        country,
+        setCountry,
+        fetchAllHeadlines
       }}
     >
       {children}

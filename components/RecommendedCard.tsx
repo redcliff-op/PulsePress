@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     justifyContent: 'center',
+    alignItems:'center',
     shadowColor: '#000',
     shadowOpacity: 0.4,
     shadowRadius: 10,
@@ -52,13 +53,13 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     margin: 10,
   },
   title: {
     color: 'white',
     fontWeight: 'bold',
-    fontSize: 16, // Adjust font size as needed
+    fontSize: 16,
     textAlign: 'left',
   },
 });
