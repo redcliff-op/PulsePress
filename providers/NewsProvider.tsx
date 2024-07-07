@@ -208,17 +208,18 @@ const NewsProvider = ({ children }: PropsWithChildren<{}>) => {
   };
 
   const fetchRecommended = async (sourceID: string) => {
-    setLoading(true);
-    const response = await fetch(
-      `https://newsapi.org/v2/everything?sources=${sourceID}&sortBy=popularity&apiKey=1f2170ec3cb342678e3d5c74d807c59b`
-    );
-    const data = await response.json();
-    if (data.status === 'ok') {
-      setRecommended(data.articles);
+    if (sourceID === 'clear') {
+      setRecommended([])
     } else {
-      setRecommended(headlines.filter((p) => p.source.id.toString() === sourceID.toString()))
+      const response = await fetch(`https://newsapi.org/v2/everything?sources=${sourceID}&language=${language}&apiKey=1f2170ec3cb342678e3d5c74d807c59b`)
+      const data = await response.json()
+      if (data.status === 'ok') {
+        setRecommended(data.articles)
+      } else {
+        const recommended = headlines.filter((p) => p.source.id.toString() === sourceID?.toString())
+        setRecommended(recommended)
+      }
     }
-    setLoading(false);
   };
 
   return (
