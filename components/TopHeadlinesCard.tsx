@@ -9,7 +9,8 @@ interface TopHeadLinesCardProps {
 }
 
 const TopHeadLinesCard = ({ newsData }: TopHeadLinesCardProps) => {
-  const { setCurrentNews } = useNewsProvider();
+  const { setCurrentNews, handleSaveNote, savedNews } = useNewsProvider();
+  const isSaved = savedNews.findIndex((p)=>p.url.toString()===newsData.url.toString())===-1
 
   return (
     <Pressable
@@ -25,14 +26,20 @@ const TopHeadLinesCard = ({ newsData }: TopHeadLinesCardProps) => {
           resizeMode="cover"
           blurRadius={40}
           borderRadius={20}
-          imageStyle={{opacity:0.7}}
+          imageStyle={{ opacity: 0.7 }}
         >
           <View style={styles.textContainer}>
             <View style={styles.rowContainer}>
               <Text style={styles.sourceName} numberOfLines={1}>
                 {newsData.source.name}
               </Text>
-              <Ionicons name='bookmark-outline' size={25} color={'white'} />
+              <Pressable 
+                onPress={()=>{
+                  handleSaveNote(newsData)
+                }}
+              >
+                <Ionicons name={(!isSaved)?'bookmark':'bookmark-outline'} size={25} color={(isSaved)?'white':'#FFA001'} />
+              </Pressable>
             </View>
             <Text style={styles.title} numberOfLines={2}>
               {newsData.title}
@@ -55,7 +62,7 @@ const TopHeadLinesCard = ({ newsData }: TopHeadLinesCardProps) => {
 const styles = StyleSheet.create({
   container: {
     marginRight: 10,
-    padding:5
+    padding: 5
   },
   imageBackground: {
     width: 250,
@@ -66,7 +73,7 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     borderRadius: 20,
     overflow: 'hidden',
-    padding:5
+    padding: 5
   },
   textContainer: {
     flex: 1,

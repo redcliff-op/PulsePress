@@ -1,9 +1,9 @@
 import { PropsWithChildren, createContext, useContext, useState, useEffect } from "react";
-import { Database } from '@nozbe/watermelondb'
+import { Database, Q } from '@nozbe/watermelondb'
 import LokiJSAdapter from '@nozbe/watermelondb/adapters/lokijs'
 import schema from '../model/schema'
 import migrations from '../model/migrations'
-import { Headlines, TopHeadlines } from '../model/Model'
+import { Headlines, TopHeadlines, Saved } from '../model/Model'
 
 type NewsType = {
   topHeadlines: NewsItem[];
@@ -12,6 +12,8 @@ type NewsType = {
   fetchHeadlines: (news: string, lang?: string) => void;
   recommended: NewsItem[];
   fetchRecommended: (sourceID: string) => void;
+  savedNews: NewsItem[],
+  handleSaveNote: (newsItem: NewsItem) => Promise<void>,
   fetchAllHeadlines: (category: string, lang?: string, ctr?: string) => void,
   currentNews: NewsItem | undefined;
   setCurrentNews: (newsItem: NewsItem) => void;
@@ -30,6 +32,8 @@ const NewsContext = createContext<NewsType>({
   recommended: [],
   fetchRecommended: (sourceID: string) => { },
   currentNews: undefined,
+  savedNews: [],
+  handleSaveNote: async (newsItem: NewsItem) => { },
   setCurrentNews: (newsItem: NewsItem) => { },
   fetchAllHeadlines: (category: string, lang?: string, ctr?: string) => { },
   loading: false,
@@ -60,7 +64,8 @@ const database = new Database({
   adapter,
   modelClasses: [
     Headlines,
-    TopHeadlines
+    TopHeadlines,
+    Saved
   ],
 })
 
@@ -68,6 +73,7 @@ const NewsProvider = ({ children }: PropsWithChildren<{}>) => {
   const [topHeadlines, setTopHeadlines] = useState<NewsItem[]>([]);
   const [headlines, setHeadlines] = useState<NewsItem[]>([]);
   const [recommended, setRecommended] = useState<NewsItem[]>([]);
+  const [savedNews, setSavedNews] = useState<NewsItem[]>([])
   const [currentNews, setCurrentNews] = useState<NewsItem>();
   const [loading, setLoading] = useState<boolean>(false);
   const [language, setLanguage] = useState<string>("en")
@@ -76,19 +82,20 @@ const NewsProvider = ({ children }: PropsWithChildren<{}>) => {
   useEffect(() => {
     loadHeadlinesFromDB();
     loadTopHeadlinesFromDB();
+    loadSavedFromDB()
   }, []);
 
   const clearTable = async (table: any) => {
     const allRecords = await table.query().fetch();
     await database.write(async () => {
-      await database.batch(...allRecords.map(record => record.prepareDestroyPermanently()));
+      await database.batch(...allRecords.map((record:any) => record.prepareDestroyPermanently()));
     });
   };
 
   const saveHeadlinesToDB = async (articles: NewsItem[], table: any) => {
     await clearTable(table);
     await database.write(async () => {
-      const records = articles.map(article => table.prepareCreate(record => {
+      const records = articles.map(article => table.prepareCreate((record:any) => {
         record.sourceId = article.source.id;
         record.sourceName = article.source.name;
         record.urlToImage = article.urlToImage;
@@ -133,6 +140,48 @@ const NewsProvider = ({ children }: PropsWithChildren<{}>) => {
     setTopHeadlines(formattedTopHeadlines);
   };
 
+  const loadSavedFromDB = async () => {
+    const allHeadlines = await database.collections.get('saved').query().fetch();
+    const formattedHeadlines = allHeadlines.map((record: any) => ({
+      source: { id: record.sourceId, name: record.sourceName },
+      urlToImage: record.urlToImage,
+      title: record.title,
+      content: record.content,
+      author: record.author,
+      description: record.description,
+      publishedAt: record.publishedAt,
+      url: record.url,
+    }));
+    setSavedNews(formattedHeadlines);
+  };
+
+  const handleSaveNote = async (newsItem: NewsItem) => {
+    const savedCollection = database.collections.get('saved');
+  
+    const existingArticle = await savedCollection.query(Q.where('url', newsItem.url)).fetch();
+  
+    await database.write(async () => {
+      if (existingArticle.length > 0) {
+        await existingArticle[0].markAsDeleted();
+        await existingArticle[0].destroyPermanently();
+        setSavedNews(savedNews.filter(article => article.url !== newsItem.url));
+      } else {
+        await savedCollection.create(record => {
+          record.sourceId = newsItem.source.id;
+          record.sourceName = newsItem.source.name;
+          record.urlToImage = newsItem.urlToImage;
+          record.title = newsItem.title;
+          record.content = newsItem.content;
+          record.author = newsItem.author;
+          record.description = newsItem.description;
+          record.publishedAt = newsItem.publishedAt;
+          record.url = newsItem.url;
+        });
+        setSavedNews([...savedNews, newsItem]);
+      }
+    });
+  };
+
   const fetchAllHeadlines = async (category: string, lang: string | undefined = language, ctr: string | undefined = country) => {
     await fetchTopHeadlines(lang, ctr)
     await fetchHeadlines(category, lang)
@@ -164,10 +213,10 @@ const NewsProvider = ({ children }: PropsWithChildren<{}>) => {
       `https://newsapi.org/v2/everything?sources=${sourceID}&sortBy=popularity&apiKey=1f2170ec3cb342678e3d5c74d807c59b`
     );
     const data = await response.json();
-    if(data.status==='ok'){
+    if (data.status === 'ok') {
       setRecommended(data.articles);
-    }else{
-      setRecommended(headlines.filter((p)=>p.source.id.toString()===sourceID.toString()))
+    } else {
+      setRecommended(headlines.filter((p) => p.source.id.toString() === sourceID.toString()))
     }
     setLoading(false);
   };
@@ -188,7 +237,9 @@ const NewsProvider = ({ children }: PropsWithChildren<{}>) => {
         setLanguage,
         country,
         setCountry,
-        fetchAllHeadlines
+        fetchAllHeadlines,
+        savedNews,
+        handleSaveNote
       }}
     >
       {children}
