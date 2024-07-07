@@ -1,4 +1,4 @@
-import { View, Text, ImageBackground, Pressable, StyleSheet } from 'react-native';
+import { View, Text, ImageBackground, Pressable, StyleSheet, ViewStyle } from 'react-native';
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -6,9 +6,10 @@ import { useNewsProvider } from '@/providers/NewsProvider';
 
 interface TopHeadLinesCardProps {
   newsData: NewsItem;
+  style: ViewStyle
 }
 
-const TopHeadLinesCard = ({ newsData }: TopHeadLinesCardProps) => {
+const TopHeadLinesCard = ({ newsData, style }: TopHeadLinesCardProps) => {
   const { setCurrentNews, handleSaveNote, savedNews } = useNewsProvider();
   const isSaved = savedNews.findIndex((p)=>p.url.toString()===newsData.url.toString())===-1
 
@@ -19,7 +20,7 @@ const TopHeadLinesCard = ({ newsData }: TopHeadLinesCardProps) => {
         router.navigate('NewsView');
       }}
     >
-      <View style={styles.container}>
+      <View style={[styles.container,style]}>
         <ImageBackground
           source={{ uri: newsData.urlToImage }}
           style={styles.imageBackground}
@@ -65,8 +66,7 @@ const styles = StyleSheet.create({
     padding: 5
   },
   imageBackground: {
-    width: 250,
-    height: 200,
+    minHeight:200,
     justifyContent: 'center',
     shadowColor: '#000',
     shadowOpacity: 0.4,

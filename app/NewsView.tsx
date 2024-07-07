@@ -1,14 +1,13 @@
-import { Image, View, Text, FlatList, Pressable, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
-import React, { useCallback, useEffect } from 'react';
+import { Image, View, Text, Pressable, SafeAreaView, StyleSheet, Animated as RNAnimated, FlatList, Alert, ScrollView } from 'react-native';
+import React, { useCallback } from 'react';
 import { useNewsProvider } from '@/providers/NewsProvider';
-import { StatusBar } from 'expo-status-bar';
-import RecommendedCard from '@/components/RecommendedCard';
-import { Link, router, useFocusEffect } from 'expo-router';
-import { DraggableScrollView } from '@/DraggableScrollView';
-import Animated, { FadeIn, FadeInUp, FadeOut } from 'react-native-reanimated';
+import { useFocusEffect } from 'expo-router';
+import HeadlinesCard from '@/components/HeadlinesCard';
+import TopHeadLinesCard from '@/components/TopHeadlinesCard';
+import Animated, { FadeIn, FadeInDown, FadeInLeft, FadeInRight, FadeInUp } from 'react-native-reanimated';
 
 const NewsView = () => {
-  const { currentNews, recommended, fetchRecommended } = useNewsProvider();
+  const { currentNews, recommended, fetchRecommended, savedNews, handleSaveNote } = useNewsProvider();
 
   useFocusEffect(
     useCallback(() => {
@@ -19,131 +18,72 @@ const NewsView = () => {
     }, [])
   );
 
+  const isSaved = savedNews.findIndex((p) => p.url.toString() === currentNews?.url.toString()) !== -1
+
   return (
-    <SafeAreaView style={styles.container}>
-      <Animated.Image
-        entering={FadeInUp}
-        fadeDuration={800}
-        source={{ uri: currentNews?.urlToImage }}
-        style={styles.image}
-      />
-      <ScrollView style={styles.newsDetailsContainer} showsHorizontalScrollIndicator={false} snapToAlignment='start'>
-        <View
-          style={{ flexDirection: 'row' }}
-        >
-          <View style={styles.sourceBadge}>
-            <Text style={styles.textWhite}>{currentNews?.source.name}</Text>
+    <View style={{ flex: 1, backgroundColor: '#161622', padding: 20 }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <Animated.View entering={FadeInLeft} style={{ flexDirection: 'row' }}>
+          <View style={{ margin: 5, padding: 15, borderRadius: 20, backgroundColor: '#283A4A', flexDirection: 'row' }}
+          >
+            <Image tintColor={'#FFA001'} source={require('../assets/images/authoricon.png')} style={{ width: 20, height: 20, marginRight: 10 }}></Image>
+            <Text style={{ fontSize: 15, color: 'white', fontWeight: 'semibold' }}>{currentNews?.author}</Text>
           </View>
-          {currentNews?.author && (
-            <View style={styles.authorBadge}>
-              <Text style={styles.textWhite}>{currentNews?.author}</Text>
-            </View>
-          )}
-          <View style={styles.dateBadge}>
-            <Text style={styles.textWhite}>{currentNews?.publishedAt?.substring(0, 10)}</Text>
+          <View style={{ margin: 5, padding: 15, borderRadius: 20, backgroundColor: '#283A4A', flexDirection: 'row' }}
+          >
+            <Text style={{ fontSize: 15, color: 'white', fontWeight: 'semibold' }}>{currentNews?.source.name}</Text>
           </View>
-        </View>
-        <Text style={styles.title}>{currentNews?.title}</Text>
-        <Text style={styles.content}>{currentNews?.content}</Text>
-        <Pressable
-          onPress={() => {
-            router.navigate({
-              pathname: '/NewsWebView',
-              params: {
-                newsUrl: currentNews?.url,
-              },
-            });
-          }}
-        >
-          <Text style={styles.fullArticle}>Full Article</Text>
-        </Pressable>
-        {(recommended.length !== 0) ?
-          <Animated.View entering={FadeIn} exiting={FadeOut}>
-            <Text style={styles.moreFrom}>{`More from ${currentNews?.source.name}`}</Text>
-            <DraggableScrollView
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-              style={{}}
-            >
-              {recommended.map((item, index) => (
-                <RecommendedCard
-                  key={item.url}
-                  newsData={item}
-                />
-              ))}
-            </DraggableScrollView>
-          </Animated.View>
-          : <View></View>}
-      </ScrollView>
-      <StatusBar animated={true} style="dark" />
-    </SafeAreaView>
-  );
-};
+          <View style={{ margin: 5, padding: 15, borderRadius: 20, backgroundColor: '#283A4A', flexDirection: 'row' }}
+          >
+            <Text style={{ fontSize: 15, color: 'white', fontWeight: 'semibold' }}>{currentNews?.publishedAt.substring(0, 10)}</Text>
+          </View>
+        </Animated.View>
+        <Animated.View entering={FadeInRight}>
+          <Pressable
+            onPress={() => {
+              handleSaveNote(currentNews)
+            }}
+            style={{ margin: 5, padding: 15, borderRadius: 20, backgroundColor: (isSaved) ? '#FFA001' : '#283A4A', flexDirection: 'row' }}
+          >
+            <Text style={{ fontSize: 15, color: (isSaved) ? 'black' : 'white', fontWeight: 'bold' }}>{(isSaved) ? 'Unsave Article' : 'Save Article'}</Text>
+          </Pressable>
+        </Animated.View>
+      </View>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1, marginTop: 15 }}>
+        <Animated.View style={{ flex: 0.3 }} entering={FadeInDown}>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <Text style={{ fontSize: 45, fontWeight: 'bold', color: 'white', marginBottom: 50 }}>{currentNews?.title}</Text>
+            <Text style={{ fontSize: 25, color: '#CDCACA', marginBottom: 50 }}>{currentNews?.description}</Text>
+            <Text style={{ fontSize: 25, color: 'gray' }}>{currentNews?.content}</Text>
+            <Pressable
+              onPress={()=>{
+                window.open(currentNews?.url,'_blank')
+              }}
+              style={{ backgroundColor: '#FFA001', padding: 20, borderRadius: 20, marginTop: 30 }}>
+              <Text style={{ fontSize: 20, fontWeight: 'bold', alignSelf: 'center', color: 'black' }}>Full Article</Text>
+            </Pressable>
+          </ScrollView>
+        </Animated.View>
+        <Animated.Image entering={FadeInUp} style={{ flex: 0.4, marginHorizontal: 20, borderRadius: 20 }} source={{ uri: currentNews?.urlToImage }}></Animated.Image>
+        <Animated.View entering={FadeInDown} style={{ flex: 0.3, backgroundColor: '#283A4A', padding: 15, borderRadius: 20 }}>
+          <FlatList
+            data={recommended}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item, index }) =>
+              (item.title !== '[Removed]' && item.source.name !== 'NPR') ?
+                (index === 0) ?
+                  <TopHeadLinesCard newsData={item} style={{ margin: -5, marginBottom: 5 }} />
+                  : <HeadlinesCard item={item} /> : null
+            }
+          />
+        </Animated.View>
+      </View>
+    </View>
+  )
+}
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#1a1a1a', // Assuming bg-background corresponds to a dark color
-  },
-  image: {
-    width: '100%',
-    height: '50%',
-  },
-  newsDetailsContainer: {
-    backgroundColor: '#1a1a1a', // Assuming bg-background corresponds to a dark color
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    marginTop: -20,
-    padding: 20,
-  },
-  sourceBadge: {
-    backgroundColor: '#2e2e2e', // Assuming bg-textFieldBackground corresponds to a specific color
-    alignSelf: 'flex-start',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 10,
-    marginRight: 10,
-  },
-  authorBadge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 10,
-    borderColor: '#777', // Assuming border-gray-500 corresponds to a specific color
-    borderWidth: 2,
-    marginHorizontal: 10,
-  },
-  dateBadge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 10,
-    borderColor: '#777', // Assuming border-gray-500 corresponds to a specific color
-    borderWidth: 2,
-    marginHorizontal: 10,
-  },
-  textWhite: {
-    color: 'white',
-  },
-  title: {
-    color: 'white',
-    fontSize: 24, // Adjust font size as needed
-    fontWeight: 'bold',
-    marginTop: 20,
-  },
-  content: {
-    color: '#ccc', // Assuming text-gray-100 corresponds to a specific color
-    marginTop: 20,
-  },
-  fullArticle: {
-    color: '#00f', // Assuming text-blue-400 corresponds to a specific color
-  },
-  moreFrom: {
-    color: 'white',
-    fontSize: 24, // Adjust font size as needed
-    fontWeight: 'bold',
-    marginVertical: 10,
-  },
-});
+
+})
 
 export default NewsView;

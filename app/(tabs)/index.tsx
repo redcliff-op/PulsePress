@@ -70,6 +70,7 @@ const Index = () => {
                     <TopHeadlinesCard
                       key={item.url}
                       newsData={item}
+                      style={{width:300}}
                     />
                   ))}
                 </DraggableScrollView>

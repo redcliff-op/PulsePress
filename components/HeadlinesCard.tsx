@@ -59,11 +59,12 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     marginLeft: 20,
+    marginVertical:5,
     justifyContent: 'space-between',
     flex: 1,
   },
   sourceName: {
-    color: '#888', // Assuming text-gray-400 corresponds to this color
+    color: '#CDCACA', // Assuming text-gray-400 corresponds to this color
   },
   title: {
     color: 'white',
@@ -72,7 +73,7 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   date: {
-    color: '#888', // Assuming text-gray-400 corresponds to this color
+    color: '#CDCACA', // Assuming text-gray-400 corresponds to this color
   },
 });
 

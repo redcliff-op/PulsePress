@@ -166,7 +166,7 @@ const NewsProvider = ({ children }: PropsWithChildren<{}>) => {
         await existingArticle[0].destroyPermanently();
         setSavedNews(savedNews.filter(article => article.url !== newsItem.url));
       } else {
-        await savedCollection.create(record => {
+        await savedCollection.create((record:any) => {
           record.sourceId = newsItem.source.id;
           record.sourceName = newsItem.source.name;
           record.urlToImage = newsItem.urlToImage;
@@ -223,7 +223,7 @@ const NewsProvider = ({ children }: PropsWithChildren<{}>) => {
   };
 
   return (
-    <NewsContext.Provider
+    <NewsContext.Provider 
       value={{
         topHeadlines,
         fetchTopHeadlines,
