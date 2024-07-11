@@ -42,3 +42,18 @@ export class Saved extends Model {
   @text('published_at') publishedAt;
   @text('url') url;
 }
+
+
+export class History extends Model {
+  static table = 'history';
+
+  @text('source_id') sourceId;
+  @text('source_name') sourceName;
+  @text('url_to_image') urlToImage;
+  @text('title') title;
+  @text('content') content;
+  @text('author') author;
+  @text('description') description;
+  @text('published_at') publishedAt;
+  @text('url') url;
+}

@@ -3,7 +3,7 @@ import { Database, Q } from '@nozbe/watermelondb'
 import LokiJSAdapter from '@nozbe/watermelondb/adapters/lokijs'
 import schema from '../model/schema'
 import migrations from '../model/migrations'
-import { Headlines, TopHeadlines, Saved } from '../model/Model'
+import { Headlines, TopHeadlines, Saved, History } from '../model/Model'
 
 type NewsType = {
   topHeadlines: NewsItem[];
@@ -17,6 +17,8 @@ type NewsType = {
   fetchAllHeadlines: (category: string, lang?: string, ctr?: string) => void,
   currentNews: NewsItem | undefined;
   setCurrentNews: (newsItem: NewsItem) => void;
+  history: NewsItem[],
+  updateHistory: (newsItem: NewsItem) => void;
   loading: boolean;
   language: string,
   setLanguage: (language: string) => void,
@@ -36,6 +38,8 @@ const NewsContext = createContext<NewsType>({
   handleSaveNote: async (newsItem: NewsItem) => { },
   setCurrentNews: (newsItem: NewsItem) => { },
   fetchAllHeadlines: (category: string, lang?: string, ctr?: string) => { },
+  history: [],
+  updateHistory: (newsItem: NewsItem) => { },
   loading: false,
   language: "",
   setLanguage: (language: string) => { },
@@ -49,14 +53,10 @@ const adapter = new LokiJSAdapter({
   useWebWorker: false,
   useIncrementalIndexedDB: true,
   onQuotaExceededError: (error) => {
+    console.log(error)
   },
   onSetUpError: (error) => {
-  },
-  extraIncrementalIDBOptions: {
-    onDidOverwrite: () => {
-    },
-    onversionchange: () => {
-    },
+    console.log(error)
   }
 })
 
@@ -65,7 +65,8 @@ const database = new Database({
   modelClasses: [
     Headlines,
     TopHeadlines,
-    Saved
+    Saved,
+    History
   ],
 })
 
@@ -78,24 +79,26 @@ const NewsProvider = ({ children }: PropsWithChildren<{}>) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [language, setLanguage] = useState<string>("en")
   const [country, setCountry] = useState<string>("in")
+  const [history, setHistory] = useState<NewsItem[]>([])
 
   useEffect(() => {
     loadHeadlinesFromDB();
     loadTopHeadlinesFromDB();
     loadSavedFromDB()
+    loadHistoryFromDB()
   }, []);
 
   const clearTable = async (table: any) => {
     const allRecords = await table.query().fetch();
     await database.write(async () => {
-      await database.batch(...allRecords.map((record:any) => record.prepareDestroyPermanently()));
+      await database.batch(...allRecords.map((record: any) => record.prepareDestroyPermanently()));
     });
   };
 
   const saveHeadlinesToDB = async (articles: NewsItem[], table: any) => {
     await clearTable(table);
     await database.write(async () => {
-      const records = articles.map(article => table.prepareCreate((record:any) => {
+      const records = articles.map(article => table.prepareCreate((record: any) => {
         record.sourceId = article.source.id;
         record.sourceName = article.source.name;
         record.urlToImage = article.urlToImage;
@@ -155,18 +158,31 @@ const NewsProvider = ({ children }: PropsWithChildren<{}>) => {
     setSavedNews(formattedHeadlines);
   };
 
+  const loadHistoryFromDB = async () => {
+    const allHeadlines = await database.collections.get('history').query().fetch();
+    const formattedHeadlines = allHeadlines.map((record: any) => ({
+      source: { id: record.sourceId, name: record.sourceName },
+      urlToImage: record.urlToImage,
+      title: record.title,
+      content: record.content,
+      author: record.author,
+      description: record.description,
+      publishedAt: record.publishedAt,
+      url: record.url,
+    }));
+    setHistory(formattedHeadlines);
+  };
+
   const handleSaveNote = async (newsItem: NewsItem) => {
     const savedCollection = database.collections.get('saved');
-  
     const existingArticle = await savedCollection.query(Q.where('url', newsItem.url)).fetch();
-  
     await database.write(async () => {
       if (existingArticle.length > 0) {
         await existingArticle[0].markAsDeleted();
         await existingArticle[0].destroyPermanently();
         setSavedNews(savedNews.filter(article => article.url !== newsItem.url));
       } else {
-        await savedCollection.create((record:any) => {
+        await savedCollection.create((record: any) => {
           record.sourceId = newsItem.source.id;
           record.sourceName = newsItem.source.name;
           record.urlToImage = newsItem.urlToImage;
@@ -182,6 +198,29 @@ const NewsProvider = ({ children }: PropsWithChildren<{}>) => {
     });
   };
 
+  const updateHistory = async (newsItem: NewsItem) => {
+    const savedCollection = database.collections.get('history');
+    const existingArticle = await savedCollection.query(Q.where('url', newsItem.url)).fetch();
+    await database.write(async () => {
+      if (existingArticle.length > 0) {
+      } else {
+        await savedCollection.create((record: any) => {
+          record.sourceId = newsItem.source.id;
+          record.sourceName = newsItem.source.name;
+          record.urlToImage = newsItem.urlToImage;
+          record.title = newsItem.title;
+          record.content = newsItem.content;
+          record.author = newsItem.author;
+          record.description = newsItem.description;
+          record.publishedAt = newsItem.publishedAt;
+          record.url = newsItem.url;
+        });
+        setHistory([...history, newsItem]);
+      }
+    });
+    await loadHistoryFromDB()
+  };
+
   const fetchAllHeadlines = async (category: string, lang: string | undefined = language, ctr: string | undefined = country) => {
     await fetchTopHeadlines(lang, ctr)
     await fetchHeadlines(category, lang)
@@ -189,7 +228,7 @@ const NewsProvider = ({ children }: PropsWithChildren<{}>) => {
 
   const fetchHeadlines = async (news: string, lang: string | undefined = language) => {
     setLoading(true);
-    const response = await fetch(`https://newsapi.org/v2/everything?q=${news}&language=${lang}&apiKey=1f2170ec3cb342678e3d5c74d807c59b`)
+    const response = await fetch(`https://newsapi.org/v2/everything?q=${news}&language=${lang}&apiKey=1f2170ec3cb34267 8e3d5c74d807c59b`)
     const data = await response.json();
     if (data.status === 'ok') {
       await saveHeadlinesToDB(data.articles, database.collections.get('headlines'))
@@ -199,7 +238,7 @@ const NewsProvider = ({ children }: PropsWithChildren<{}>) => {
   };
 
   const fetchTopHeadlines = async (lang: string | undefined = language, ctr: string | undefined = country) => {
-    const response = await fetch(`https://newsapi.org/v2/top-headlines?country=${ctr}&language=${lang}&apiKey=1f2170ec3cb342678e3d5c74d807c59b`)
+    const response = await fetch(`https://newsapi.org/v2/top-headlines?country=${ctr}&language=${lang}&apiKey=1f2170ec3cb342 678e3d5c74d807c59b`)
     const data = await response.json();
     if (data.status === 'ok') {
       await saveHeadlinesToDB(data.articles, database.collections.get('top_headlines'));
@@ -211,7 +250,7 @@ const NewsProvider = ({ children }: PropsWithChildren<{}>) => {
     if (sourceID === 'clear') {
       setRecommended([])
     } else {
-      const response = await fetch(`https://newsapi.org/v2/everything?sources=${sourceID}&language=${language}&apiKey=1f2170ec3cb342678e3d5c74d807c59b`)
+      const response = await fetch(`https://newsapi.org/v2/everything?sources=${sourceID}&language=${language}&apiKey=1f2170ec3 cb342678e3d5c74d807c59b`)
       const data = await response.json()
       if (data.status === 'ok') {
         setRecommended(data.articles)
@@ -223,7 +262,7 @@ const NewsProvider = ({ children }: PropsWithChildren<{}>) => {
   };
 
   return (
-    <NewsContext.Provider 
+    <NewsContext.Provider
       value={{
         topHeadlines,
         fetchTopHeadlines,
@@ -240,7 +279,9 @@ const NewsProvider = ({ children }: PropsWithChildren<{}>) => {
         setCountry,
         fetchAllHeadlines,
         savedNews,
-        handleSaveNote
+        handleSaveNote,
+        updateHistory,
+        history
       }}
     >
       {children}

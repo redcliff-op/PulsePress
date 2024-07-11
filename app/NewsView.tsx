@@ -7,11 +7,12 @@ import TopHeadLinesCard from '@/components/TopHeadlinesCard';
 import Animated, { FadeIn, FadeInDown, FadeInLeft, FadeInRight, FadeInUp } from 'react-native-reanimated';
 
 const NewsView = () => {
-  const { currentNews, recommended, fetchRecommended, savedNews, handleSaveNote } = useNewsProvider();
+  const { currentNews, recommended, fetchRecommended, savedNews, handleSaveNote, updateHistory } = useNewsProvider();
 
   useFocusEffect(
     useCallback(() => {
       fetchRecommended(currentNews?.source.id)
+      updateHistory(currentNews)
       return () => {
         fetchRecommended('clear')
       }

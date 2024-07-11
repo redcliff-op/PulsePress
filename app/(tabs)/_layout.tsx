@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
-import {Image, StyleSheet} from 'react-native'
+import { Image, StyleSheet } from 'react-native'
 
 
 export default function TabLayout() {
@@ -9,18 +9,18 @@ export default function TabLayout() {
       screenOptions={{
         tabBarShowLabel: false,
         headerShown: false,
-        tabBarActiveTintColor:'#FFA001',
+        tabBarActiveTintColor: '#FFA001',
         tabBarStyle: {
-          backgroundColor:'#161622',
-          borderTopWidth:0,
-          height:40,
+          backgroundColor: '#161622',
+          borderTopWidth: 0,
+          height: 40,
         }
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          tabBarIcon: ({color}) =>
+          tabBarIcon: ({ color }) =>
             <Image
               source={require('../../assets/icons/home.png')}
               style={styles.image}
@@ -31,7 +31,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="saved"
         options={{
-          tabBarIcon: ({color}) =>
+          tabBarIcon: ({ color }) =>
             <Image
               source={require('../../assets/icons/bookmark.png')}
               style={styles.image}
@@ -40,9 +40,20 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="history"
+        options={{
+          tabBarIcon: ({ color }) =>
+            <Image
+              source={require('../../assets/icons/history.png')}
+              style={styles.image}
+              tintColor={color}
+            />
+        }}
+      />
+      <Tabs.Screen
         name="profile"
         options={{
-          tabBarIcon: ({color}) =>
+          tabBarIcon: ({ color }) =>
             <Image
               source={require('../../assets/icons/profile.png')}
               style={styles.image}
@@ -55,9 +66,9 @@ export default function TabLayout() {
 }
 
 const styles = StyleSheet.create({
-  image:{
-    width:25,
-    height:25,
-    marginBottom:25
+  image: {
+    width: 25,
+    height: 25,
+    marginBottom: 25
   }
 })
